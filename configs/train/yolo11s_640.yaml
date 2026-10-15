@@ -1,0 +1,11 @@
+model: yolo11s.pt          # COCO ön eğitimli
+data: configs/dspcbsd.yaml
+imgsz: 640
+epochs: 100
+batch: 32                  # Colab T4 için; yerel 6 GB'ta 8–16
+seed: 0
+patience: 30
+workers: 4
+optimizer: auto
+cache: false
+val_split: val_internal    # model seçimi için; nihai rapor val_official

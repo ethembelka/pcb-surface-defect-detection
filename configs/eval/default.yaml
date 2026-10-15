@@ -1,0 +1,11 @@
+split: val_official
+imgsz: 640
+conf_for_map: 0.001        # mAP hesabı için düşük eşik (standart)
+iou_nms: 0.6
+iou_match: 0.5             # karışıklık matrisi eşleme eşiği
+conf_for_decision: auto    # F1'i maksimize eden eşik
+fps:
+  batch: 1
+  half: true
+  warmup: 50
+  iters: 500

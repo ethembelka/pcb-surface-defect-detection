@@ -1,0 +1,15 @@
+# DsPCBSD+ dataset config for Ultralytics YOLO.
+# TODO: Sınıf sırasını veri setindeki etiket indeksleriyle doğrula (örn. COCO json'daki categories listesi).
+path: ../data/DsPCBSD/Data_YOLO   # Colab'da defter bu yolu /content/DsPCBSD/Data_YOLO olarak değiştirir
+train: images/train
+val: images/val
+names:
+  0: SH
+  1: SP
+  2: SC
+  3: OP
+  4: MB
+  5: HB
+  6: CS
+  7: CFO
+  8: BMFO
