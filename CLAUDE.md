@@ -29,6 +29,8 @@ açısından ayrıntılı analiz etmek. Hoca "uygulama değil bilimsel proje" is
 4. Tohumlar arası dalgalanma (ortalama ± std) ve model/girdi boyutunun etkisi.
 
 ## Belgeler (kod yazmadan önce oku)
+- `docs/DECISIONS.md` → alınmış kararlar (**ilk bunu oku**)
+- `docs/STATUS.md` → güncel durum, sıradaki adımlar
 - `docs/ARCHITECTURE.md` → modüller, sorumluluklar, arayüzler, kod standartları
 - `docs/EVALUATION_PROTOCOL.md` → ayrımlar, metrikler, referans sonuçlar, raporlama biçimi
 - `docs/EXPERIMENTS.md` → deney kaydı (her deney buraya işlenir)
@@ -68,3 +70,11 @@ Sınıf sırası doğrulandı: YOLO id = COCO category_id − 1. Kutu sayıları
 ## Teslimler
 Öneri 18 Ekim 2026 · Teslim 13 Aralık 2026 (IEEE rapor, sunum, kod; zip: `CMPE7144_2026_fall_project_studentID_name_surname.zip`) · Sunum 16 Aralık 2026.
 Araştırma makaleleri: `../../03_Research_Paper/` (Lv 2024, Wang 2025 PCB-FS, Jin 2026 PCB-MMF, Xia 2026 VisDefectNet).
+
+## Senkronizasyon (claude.ai sohbeti ↔ Claude Code)
+Kullanıcı bu proje hakkında claude.ai'deki "Doktora Dersleri" sohbetinde de konuşuyor; o sohbet bu klasöre doğrudan yazabiliyor.
+Ortak hafıza bu depodaki dosyalardır:
+- `docs/DECISIONS.md` → alınmış kararlar (hoca görüşmeleri, kapsam değişiklikleri). **Oturum başında oku.** Yeni bir karar alınırsa en üste tarihli satır ekle.
+- `docs/STATUS.md` → güncel durum ve sıradaki adımlar. **Her çalışma oturumunun sonunda güncelle.**
+- `docs/EXPERIMENTS.md` → deney sonuçları.
+- Kurallar: işi bitirince commit at (yarım değişiklik bırakma); oturum başında `git log --oneline -5` ve `git status` ile başka yerden gelen değişikliklere bak.
