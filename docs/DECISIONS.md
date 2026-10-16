@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-16 (cc): Depo **public** yapıldı (kullanıcı isteği). Colab defteri `GITHUB_TOKEN` olmadan da çeker; veri ve ağırlıklar depoda yok.
 - 2026-10-16 (cc): Depo GitHub'da **private**: https://github.com/ethembelka/pcb-surface-defect-detection (`origin/main`). Colab defteri depoyu `GITHUB_TOKEN` gizli anahtarıyla çeker.
 - 2026-10-16 (sohbet): Proje önerisi yazıldı → `../Proposal/CMPE7144_Proposal_Ethem_Belka_Sahin.pdf` (teslim 18 Ekim). Başlık: "Where Do Detectors Fail on Small PCB Defects?"
 - 2026-10-16 (sohbet): Veri doğrulandı: 8.208/2.051 görüntü, 16.184/4.092 kutu; YOLO id = COCO id − 1; kutuların %67'si küçük (<32²).

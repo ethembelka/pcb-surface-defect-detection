@@ -5,13 +5,12 @@ _Son güncelleme: 2026-10-16 (cc)_
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler, Colab defteri
 - Veri `data/DsPCBSD/DsPCBSD+/` altında, doğrulandı; zip Drive'da `MyDrive/CMPE7144_PCB/data/`
 - Proje önerisi PDF'i hazır (kullanıcı okuyup gönderecek)
-- Depo GitHub'da (private): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
+- Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki
-1. Colab'da Secrets → `GITHUB_TOKEN` ekle (depo private olduğu için gerekli) (kullanıcı)
-2. Eğitimden önce aşağıdaki açık sorunlardan 1 ve 2'yi çöz
-3. Ana eğitim: YOLO11s, 640, tohum 0 (Colab) → süreyi ölç
-4. Değerlendirme + hata analizi
+1. Eğitimden önce aşağıdaki açık sorunlardan 1 ve 2'yi çöz
+2. Ana eğitim: YOLO11s, 640, tohum 0 (Colab) → süreyi ölç
+3. Değerlendirme + hata analizi
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16)
 1. **`val_internal` kurulmamış:** `configs/dspcbsd.yaml` → `val: images/val` (resmi val). Defter de bunu kullanıyor, yani `best.pt` resmi val'e göre seçilir; protokole aykırı. `train.yaml`'daki `val_split` alanını Ultralytics okumaz. `splits.py` + ayrı eğitim yaml'ı gerekli.
