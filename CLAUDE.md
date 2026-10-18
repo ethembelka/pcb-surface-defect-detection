@@ -31,6 +31,7 @@ açısından ayrıntılı analiz etmek. Hoca "uygulama değil bilimsel proje" is
 ## Belgeler (kod yazmadan önce oku)
 - `docs/DECISIONS.md` → alınmış kararlar (**ilk bunu oku**)
 - `docs/STATUS.md` → güncel durum, sıradaki adımlar
+- `docs/ROADMAP.md` → aşamalar (A1–A6), takvim, eksikler (E1–E9), karar kapıları
 - `docs/ARCHITECTURE.md` → modüller, sorumluluklar, arayüzler, kod standartları
 - `docs/EVALUATION_PROTOCOL.md` → ayrımlar, metrikler, referans sonuçlar, raporlama biçimi
 - `docs/EXPERIMENTS.md` → deney kaydı (her deney buraya işlenir)

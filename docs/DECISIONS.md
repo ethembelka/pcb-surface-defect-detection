@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-18 (cc): Yol haritası `docs/ROADMAP.md`: A1 altyapı → A2 ana eğitim → A3 değerlendirme → A4 hata analizi → A5 ek eğitimler → A6 rapor; kod dondurma 6 Aralık.
 - 2026-10-16 (sohbet): Öneri revize: 9 kusur türü tabloyla açıklandı; ayrım kuralı (train %90 / iç doğrulama %10 / resmi val = test) ve 640 px büyütmenin gerekçesi yazıldı; ek eğitimler ana eğitim süresi ölçüldükten sonra seçilecek.
 - 2026-10-16 (cc): Depo **public** yapıldı (kullanıcı isteği). Colab defteri `GITHUB_TOKEN` olmadan da çeker; veri ve ağırlıklar depoda yok.
 - 2026-10-16 (cc): Depo GitHub'da **private**: https://github.com/ethembelka/pcb-surface-defect-detection (`origin/main`). Colab defteri depoyu `GITHUB_TOKEN` gizli anahtarıyla çeker.

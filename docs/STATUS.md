@@ -1,5 +1,7 @@
 # Durum
-_Son güncelleme: 2026-10-16 (cc)_
+_Son güncelleme: 2026-10-18 (cc)_
+
+**Aşama: 0 → A1 (Altyapı).** Plan: `docs/ROADMAP.md`. Yerel ortam hazır: Python 3.13, torch 2.6 + CUDA (RTX 3060 6 GB), ultralytics 8.3.101, pycocotools.
 
 ## Hazır
 - Depo yapısı, mimari, değerlendirme protokolü, skill'ler, Colab defteri
@@ -7,10 +9,10 @@ _Son güncelleme: 2026-10-16 (cc)_
 - Proje önerisi PDF'i hazır (kullanıcı okuyup gönderecek)
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
-## Sıradaki
-1. Eğitimden önce aşağıdaki açık sorunlardan 1 ve 2'yi çöz
-2. Ana eğitim: YOLO11s, 640, tohum 0 (Colab) → süreyi ölç
-3. Değerlendirme + hata analizi
+## Sıradaki (ayrıntı: ROADMAP.md → A1)
+1. Öneriyi bugün (18 Ekim) gönder (kullanıcı)
+2. A1: config/utils iskeleti → `splits.py` (val_internal) + test → eğitim akışı → yerel duman testi, epoch süresini ölç
+3. Karar kapısı: ana eğitim yerelde mi Colab'da mı
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16)
 1. **`val_internal` kurulmamış:** `configs/dspcbsd.yaml` → `val: images/val` (resmi val). Defter de bunu kullanıyor, yani `best.pt` resmi val'e göre seçilir; protokole aykırı. `train.yaml`'daki `val_split` alanını Ultralytics okumaz. `splits.py` + ayrı eğitim yaml'ı gerekli.
