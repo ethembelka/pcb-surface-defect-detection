@@ -1,3 +1,7 @@
+# Package metadata and tool settings.
+# The code uses a "src layout": importable package is src/pcbdet/. Nothing needs to be
+# installed to run the tests or scripts — pytest adds src/ to the path via `pythonpath`
+# below, and each script in scripts/ inserts src/ into sys.path itself.
 [project]
 name = "pcbdet"
 version = "0.1.0"

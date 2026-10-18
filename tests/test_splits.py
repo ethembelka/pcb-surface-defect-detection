@@ -1,4 +1,14 @@
-"""Tests for the internal train_fit / val_internal split (no real data needed)."""
+"""Tests for the internal train_fit / val_internal split.
+
+No real dataset is needed: the tests build small synthetic image lists (and, for the
+end-to-end test, a tiny fake Data_YOLO tree in a temp dir). They guard the properties the
+evaluation protocol depends on:
+- no image is on both sides (no leakage) and none is lost,
+- every class is present on both sides, and rare classes get their fair share,
+- the split is deterministic for a seed (so Colab and local runs agree),
+- list lines are in the exact form Ultralytics can resolve (``./images/...``, no ``../``).
+Run with ``pytest -q`` from the repository root.
+"""
 
 from __future__ import annotations
 

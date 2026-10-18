@@ -1,4 +1,9 @@
-"""Run bookkeeping: run_id, output directory, config snapshot and git hash."""
+"""Run bookkeeping: run_id, output directory, config snapshot and git hash.
+
+Project rule: every run writes ``config.yaml`` and the git commit hash next to its results
+(``outputs/results/<run_id>/``), so months later we can tell exactly which code and settings
+produced a number in the report.
+"""
 
 from __future__ import annotations
 
@@ -12,7 +17,7 @@ from pcbdet.utils.io import write_yaml
 
 
 def git_hash(short: bool = False) -> str:
-    """Current commit hash (``unknown`` outside a git checkout)."""
+    """Current commit hash (``unknown`` outside a git checkout, e.g. an unpacked zip)."""
     args = ["git", "rev-parse", "--short", "HEAD"] if short else ["git", "rev-parse", "HEAD"]
     try:
         return subprocess.check_output(args, cwd=REPO_ROOT, text=True).strip()
@@ -21,7 +26,10 @@ def git_hash(short: bool = False) -> str:
 
 
 def make_run_id(model: str, imgsz: int, seed: int, date: dt.date | None = None) -> str:
-    """``{YYYYMMDD}_{model}_{imgsz}_s{seed}`` as defined in docs/ARCHITECTURE.md."""
+    """``{YYYYMMDD}_{model}_{imgsz}_s{seed}`` as defined in docs/ARCHITECTURE.md.
+
+    Example: ``20261101_yolo11s_640_s0``. The ``.pt`` suffix of a weights file is dropped.
+    """
     date = date or dt.date.today()
     model = model.replace(".pt", "")
     return f"{date:%Y%m%d}_{model}_{imgsz}_s{seed}"

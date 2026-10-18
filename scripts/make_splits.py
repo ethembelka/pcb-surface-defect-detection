@@ -1,7 +1,17 @@
 """Create the train_fit / val_internal lists from the official DsPCBSD+ train split.
 
-Usage:
+This is a thin command-line entry point (project rule: no logic in scripts/). All the work is
+done by ``pcbdet.data.splits.make_splits``; this file only parses arguments and prints a
+per-class summary table so the result can be checked at a glance.
+
+Usage (from the repository root):
     python scripts/make_splits.py --config configs/splits.yaml
+
+Outputs:
+    data/splits/train_fit.txt, val_internal.txt, split_stats.json   (git-tracked, canonical)
+    <Data_YOLO>/train_fit.txt, val_internal.txt                     (copies read by Ultralytics)
+
+Run it again after unpacking the dataset on a new machine (e.g. Colab): same seed -> same split.
 """
 
 from __future__ import annotations
@@ -10,6 +20,7 @@ import argparse
 import sys
 from pathlib import Path
 
+# Make ``import pcbdet`` work without installing the package (src layout).
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from pcbdet.config import SplitConfig  # noqa: E402

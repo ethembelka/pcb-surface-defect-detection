@@ -1,19 +1,33 @@
 """Internal train_fit / val_internal split of the official DsPCBSD+ training set.
 
-Why: the dataset has no test set, so the official *val* split is reserved for final reporting
-(docs/EVALUATION_PROTOCOL.md). Checkpoint selection therefore needs its own held-out part,
-carved out of the official *train* split.
+Why this exists
+---------------
+DsPCBSD+ ships only *train* (8 208 images) and *val* (2 051 images); there is no test set.
+Our evaluation protocol (docs/EVALUATION_PROTOCOL.md) reserves the official *val* split for
+final reporting, so it must never influence training or checkpoint selection. The detector
+therefore needs its own held-out part, carved out of the official *train* split:
 
-How: every image is assigned to a stratum = its rarest class (by image-level frequency), so
-that each class ends up with roughly ``val_ratio`` of its images in val_internal. Within each
-stratum the images are shuffled with a fixed seed and the first ``val_ratio`` share goes to
-val_internal. The result is deterministic for a given (seed, image list).
+    official train (8 208)  ->  train_fit (90 %, learns the weights)
+                            ->  val_internal (10 %, picks the best epoch / settings)
+    official val   (2 051)  ->  "test", used once at the very end
 
-The list files are written in the Ultralytics txt format: one image path per line, prefixed
-with ``./`` so that Ultralytics resolves it relative to the list file's directory. Ultralytics
-replaces *every* ``./`` in a line (so ``../`` breaks); therefore the lists are copied to the
-dataset root itself (``<yolo_root>/train_fit.txt``) and contain only ``./images/<split>/<file>``
-lines. The git-tracked copy in ``out_dir`` has identical content and is the canonical one.
+How the split is made
+---------------------
+1. Every training image is read with its YOLO label file to find which classes it contains.
+2. The image is assigned to a *stratum* = its rarest class (rarest by image-level frequency).
+   A plain random split could put most of a rare class (e.g. SH) on one side; stratifying
+   guarantees each class keeps ~val_ratio of its images in val_internal.
+3. Within each stratum the images are shuffled with a fixed seed and the first ``val_ratio``
+   share goes to val_internal. Same seed + same files -> byte-identical lists every time.
+
+Output
+------
+Two list files in the Ultralytics "txt" format (one image path per line). Ultralytics resolves
+a leading ``./`` against the directory *of the list file itself* and replaces **every** ``./``
+in the line (so ``../`` breaks). Hence the lists are copied to the dataset root
+(``<yolo_root>/train_fit.txt``) and contain only ``./images/train/<file>`` lines.
+The git-tracked copy in ``out_dir`` (data/splits/) has identical content and is canonical;
+``split_stats.json`` next to it records per-class image counts for the report.
 """
 
 from __future__ import annotations
@@ -34,13 +48,18 @@ IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".bmp")
 
 @dataclass(frozen=True)
 class ImageRecord:
+    """One training image: file stem, absolute path and the set of YOLO class ids it contains."""
+
     stem: str
     image_path: Path
-    classes: frozenset[int]  # YOLO class ids present in the image
+    classes: frozenset[int]
 
 
 def read_label_classes(label_path: Path) -> frozenset[int]:
-    """Class ids in a YOLO label file (missing/empty file -> empty set)."""
+    """Class ids in a YOLO label file (``<cls> <cx> <cy> <w> <h>`` per line).
+
+    A missing or empty file means a background image (no defects) -> empty set.
+    """
     if not label_path.exists():
         return frozenset()
     ids: set[int] = set()
@@ -53,7 +72,11 @@ def read_label_classes(label_path: Path) -> frozenset[int]:
 
 
 def scan_split(yolo_root: Path, split: str) -> list[ImageRecord]:
-    """All images of ``<yolo_root>/images/<split>`` with their label classes, sorted by stem."""
+    """All images of ``<yolo_root>/images/<split>`` with their label classes, sorted by stem.
+
+    Sorting makes the input order independent of the file system, which the fixed-seed
+    shuffle in ``split_records`` relies on.
+    """
     img_dir = yolo_root / "images" / split
     lbl_dir = yolo_root / "labels" / split
     if not img_dir.is_dir():
@@ -67,7 +90,10 @@ def scan_split(yolo_root: Path, split: str) -> list[ImageRecord]:
 
 
 def stratify_by_rarest_class(records: list[ImageRecord]) -> dict[int, list[ImageRecord]]:
-    """Group images by their rarest class (image-level frequency); -1 = no labels."""
+    """Group images by their rarest class (image-level frequency); key -1 = no labels.
+
+    Ties are broken by the smaller class id so the grouping is deterministic.
+    """
     freq = Counter(c for r in records for c in r.classes)
     strata: dict[int, list[ImageRecord]] = defaultdict(list)
     for r in records:
@@ -79,10 +105,14 @@ def stratify_by_rarest_class(records: list[ImageRecord]) -> dict[int, list[Image
 def split_records(
     records: list[ImageRecord], val_ratio: float, seed: int
 ) -> tuple[list[ImageRecord], list[ImageRecord]]:
-    """Deterministic stratified split -> (train_fit, val_internal), each sorted by stem."""
+    """Deterministic stratified split -> (train_fit, val_internal), each sorted by stem.
+
+    Each stratum contributes ``round(len * val_ratio)`` images to val_internal (at least one
+    when the stratum has more than one image, so no class disappears from either side).
+    """
     if not 0.0 < val_ratio < 1.0:
         raise ValueError(f"val_ratio must be in (0, 1), got {val_ratio}")
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # local RNG: independent of any global random state
     train, val = [], []
     strata = stratify_by_rarest_class(records)
     for key in sorted(strata):
@@ -96,13 +126,16 @@ def split_records(
 
 
 def class_image_counts(records: list[ImageRecord]) -> dict[str, int]:
-    """Number of images containing each class."""
+    """Number of images containing each class (an image with two classes counts for both)."""
     cnt = Counter(c for r in records for c in r.classes)
     return {CLASS_NAMES[c]: cnt.get(c, 0) for c in range(NUM_CLASSES)}
 
 
 def to_list_line(image_path: Path, yolo_root: Path) -> str:
-    """``./images/<split>/<file>`` relative to ``yolo_root`` (never contains ``..``)."""
+    """``./images/<split>/<file>`` relative to ``yolo_root`` (never contains ``..``).
+
+    Forward slashes are used on every OS; Ultralytics converts them to the local separator.
+    """
     rel = os.path.relpath(image_path, yolo_root).replace(os.sep, "/")
     if rel.startswith(".."):
         raise ValueError(f"{image_path} is not inside {yolo_root}")
@@ -110,7 +143,11 @@ def to_list_line(image_path: Path, yolo_root: Path) -> str:
 
 
 def make_splits(cfg: SplitConfig) -> dict:
-    """Run the split, write list files (tracked copy + copy inside the dataset tree) and stats."""
+    """Run the split, write list files (tracked copy + copy inside the dataset tree) and stats.
+
+    Idempotent: running it again with the same config rewrites identical files.
+    Returns the stats dict that is also written to ``split_stats.json``.
+    """
     records = scan_split(cfg.yolo_root, cfg.source_split)
     train, val = split_records(records, cfg.val_ratio, cfg.seed)
     cfg.out_dir.mkdir(parents=True, exist_ok=True)

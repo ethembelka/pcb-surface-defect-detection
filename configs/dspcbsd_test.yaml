@@ -1,6 +1,12 @@
-# DsPCBSD+ dataset config — FINAL REPORTING ONLY (test = official val split, 2 051 images).
-# Never used during training or checkpoint selection (docs/EVALUATION_PROTOCOL.md).
-# `train` is required by Ultralytics but is never read in evaluation; it points to train_fit for completeness.
+# DsPCBSD+ dataset config — FINAL REPORTING ONLY.
+#
+# "Test" = the official val split (2 051 images). The dataset has no separate test set, so this
+# split plays that role: it is never used for training, early stopping or any setting choice
+# (docs/EVALUATION_PROTOCOL.md). Each trained model is evaluated on it exactly once.
+#
+# `train` is required by the Ultralytics yaml format but is never read during evaluation;
+# it points to train_fit for completeness. `path` is relative to the repo root and is made
+# absolute by pcbdet.config.DatasetConfig before Ultralytics sees it.
 path: data/DsPCBSD/DsPCBSD+/Data_YOLO
 train: train_fit.txt
 val: images/val

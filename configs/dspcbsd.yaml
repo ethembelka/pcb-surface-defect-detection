@@ -1,10 +1,17 @@
 # DsPCBSD+ dataset config for Ultralytics YOLO — TRAINING / MODEL SELECTION.
-# train = train_fit (90 % of official train), val = val_internal (10 %); lists made by scripts/make_splits.py
-# (tracked copy: data/splits/, copy read by Ultralytics: <path>/ — identical content; "./" in a list = the list's dir).
-# The official val split is NOT referenced here; it is used only via configs/dspcbsd_test.yaml for final reporting.
-# Sınıf sırası doğrulandı (15.10.2026): YOLO id = COCO category_id - 1; COCO: 1 SH ... 9 BMFO.
-# `path` is relative to the repo root; pcbdet.config.DatasetConfig makes it absolute before Ultralytics sees it
-# (Ultralytics resolves a relative `path` against its own datasets dir, not the repo).
+#
+# train = train_fit     (90 % of the official train split)  -> the model learns from these
+# val   = val_internal  (10 % of the official train split)  -> picks the best epoch, never reported
+# The official val split is NOT referenced here; it is the "test" set and is used only through
+# configs/dspcbsd_test.yaml for the final numbers (docs/EVALUATION_PROTOCOL.md).
+#
+# The two list files are produced by scripts/make_splits.py. The canonical, git-tracked copies
+# live in data/splits/; byte-identical copies are placed in `path` because Ultralytics resolves
+# a leading "./" in a list line against the list file's own directory.
+# `path` is relative to the repo root; pcbdet.config.DatasetConfig makes it absolute before
+# Ultralytics sees it (Ultralytics resolves a relative `path` against its own datasets dir).
+#
+# Class order verified 2026-10-15: YOLO id = COCO category_id - 1 (COCO: 1 SH ... 9 BMFO).
 path: data/DsPCBSD/DsPCBSD+/Data_YOLO
 train: train_fit.txt
 val: val_internal.txt

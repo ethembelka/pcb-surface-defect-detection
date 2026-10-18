@@ -1,4 +1,9 @@
-"""File I/O helpers. All disk writes in the project go through here."""
+"""File I/O helpers.
+
+Project rule: side effects (writing to disk) live at the edges. All JSON/YAML/text writes go
+through these functions so that encoding (UTF-8), directory creation and line endings are
+handled in one place and the rest of the code stays pure.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +20,7 @@ def read_json(path: str | Path) -> Any:
 
 
 def write_json(obj: Any, path: str | Path, indent: int = 2) -> Path:
+    """Write ``obj`` as pretty JSON (UTF-8, non-ASCII kept readable); creates parent dirs."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -23,6 +29,7 @@ def write_json(obj: Any, path: str | Path, indent: int = 2) -> Path:
 
 
 def write_yaml(obj: Any, path: str | Path) -> Path:
+    """Write ``obj`` as YAML keeping key order (used for run config snapshots)."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -37,6 +44,7 @@ def read_lines(path: str | Path) -> list[str]:
 
 
 def write_lines(lines: Iterable[str], path: str | Path) -> Path:
+    """One item per line with ``\\n`` endings on every OS (keeps git diffs clean on Windows)."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as f:
