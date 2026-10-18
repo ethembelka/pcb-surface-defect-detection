@@ -9,7 +9,8 @@ _Son güncelleme: 2026-10-18 (cc)_
 - **Sağlama (duman modeli, val_internal):** pycocotools AP50 **0,1935** / AP50:95 **0,0892** ↔ Ultralytics'in aynı model için verdiği 0,199 / 0,0898. Sınıf bazında da tutarlı (HB 0,451 ↔ 0,452). Yani id eşlemesi doğru. F1-maks eşik 0,28. Verimlilik (3060, fp16, batch 1): 9,43 M param, 21,6 GFLOPs, 25,7 ms/görüntü (38,9 FPS).
 - Test ayrımı için GT yükleme doğrulandı (2.051 görüntü, 4.092 kutu); **test'te tahmin henüz çalıştırılmadı** (eğitim bitince, bir kez).
 - Testler: 24 geçiyor (`test_eval.py`: IoU, eşleme, F1-maks eşik, karışıklık matrisi, id eşlemesi, pycocotools).
-- Not: `predictions.json` ~23 MB (821 görüntü × 300 kutu); `outputs/` git dışı. Smoke run'ın rapor dosyaları `reports/` altından silindi (gerçek run'lar kalacak).
+- Not: `predictions.json` ~23 MB (821 görüntü × 300 kutu); `outputs/` git dışı.
+- **Duman testi çıktıları silindi (kullanıcı isteği, 18 Eki gece):** `outputs/runs/*_smoke`, `outputs/results/*_smoke`, `reports/` altındaki smoke tablo/şekilleri. Sayıları yukarıda kayıtlı; ihtiyaç olursa `configs/train/smoke_local.yaml` ile 6 dakikada yeniden üretilir. `yolo11s.pt` (COCO ön eğitimli başlangıç ağırlığı) duruyor.
 
 ## A2 ana eğitim — Colab (2026-10-18 ~18:55 başladı)
 - Tesla T4 (15 GB), torch 2.11+cu130 (yerelde 2.6), ultralytics 8.3.101, 2 dataloader worker. `run_id = yolo11s_640_s0`, çıktılar Drive `CMPE7144_PCB/runs/yolo11s_640_s0/`.
