@@ -38,3 +38,12 @@ results_dir: outputs/results      # outputs/results/<run_id>/<split>/
 tables_dir: reports/tables
 figures_dir: reports/figures
 references: configs/references.yaml
+
+analysis:                 # phase A4 (scripts/analyze.py); uses the predictions of the evaluated split
+  top_pairs: 5            # most frequent class confusions to document with examples
+  gallery_per_class: 12   # FN / FP crops per class
+  pair_examples: 8        # crops per confusion pair
+  crop_margin: 1.0        # context around a box, relative to box size (1.0 = one box width on each side)
+  crop_min_px: 48         # minimum crop side in original pixels
+  crop_size: 160          # crop is resized to this many pixels for the grid
+  low_support: 30         # cells with fewer GT boxes than this are flagged, not interpreted

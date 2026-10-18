@@ -1,7 +1,12 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A2 ✅ · A3 ✅ (test bir kez ölçüldü, EXPERIMENTS.md'de) · sırada A4 hata analizi.** Plan: `docs/ROADMAP.md`.
+**Aşama: A2 ✅ · A3 ✅ · A4 ✅ (bulgular EXPERIMENTS.md "Bulgular" B1–B8) · sırada A5 karar kapısı.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-19, cc) — A4 hata analizi
+- `scripts/analyze.py --run <run> --split test` → `analysis.json` + 4 tablo (`size_ap`, `size_recall`, `iou`, `confusion_pairs`) + 24 şekil (`iou_boxplot`, sınıf başına `gallery_fn_*` / `gallery_fp_*`, çift başına `gallery_pair_*`). Modüller `src/pcbdet/analysis/{gt_matching,size_analysis,iou_analysis,confusion_pairs,error_gallery,analyzer}.py`; 29 test.
+- Ana bulgular (ayrıntı EXPERIMENTS.md): CS'te zorluk boyuttan (küçük CS AP50 0,59, büyük 0,86) ve **kutu granülerliğinden** (uzun çizik tek kutu, model parçalı buluyor) geliyor; CFO'da boyuttan bağımsız; SP/MB lokalizasyonu zayıf (medyan IoU 0,75/0,77) → AP50:95 düşük; en sık karışmalar MB↔CFO ve SC↔SP (simetrik, küçük kutular), CFO→BMFO (tek yönlü); FP'lerin %51'i aslında sınıf karışması; **HB FP'leri (39/41 yakınında GT yok) etiket eksikliği adayı** → elle doğrulanacak.
+- Kullanıcı yorumu bekliyor: bulgu metinleri taslak; kullanıcı okuyup düzeltir, rapora o hâliyle girer.
 
 ## Son yapılan (2026-10-19, cc) — TEST sonucu (resmi val, bir kez, kullanıcı onayıyla)
 - `evaluate.py --split test --efficiency` → `outputs/results/yolo11s_640_s0/test/metrics.json`; tablolar/şekil `reports/`.
@@ -57,8 +62,8 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
-1. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı → EXPERIMENTS.md "Bulgular"
-2. A5 karar kapısı: 150 s/epoch × 100 = 4,2 sa/eğitim (Colab) → tohum 1–2, 320/1024, n/m sığar; sıra kullanıcıyla kararlaştırılacak
+1. Kullanıcı: Bulgular B1–B8'i oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
+2. A5 karar kapısı: 4,2 sa/eğitim (Colab) → öncelik: tohum 1–2 (ortalama ± std) → 320/1024 (B4'ü doğrudan sınar) → YOLO11n/m; sıra kullanıcıyla
 3. Referans sayılarını makale PDF'inden bir kez daha doğrula (EVALUATION_PROTOCOL.md notu)
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)

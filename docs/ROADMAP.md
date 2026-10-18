@@ -50,7 +50,7 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 3. ✅ (19 Eki) Resmi val (test) üzerinde **bir kez** koş → `metrics.json`; `reporting/tables.py` → referanslarla ana tablo.
 - **Bitti sayılır:** AP50, AP50:95, APs/m/l, sınıf bazlı P/R/F1, karışıklık matrisi, FPS hazır; sayılar Ultralytics'in kendi `val` çıktısıyla kabaca tutarlı (büyük fark varsa E3'ü kontrol et).
 
-## A4 — Hata analizi (9–15 Kas; yeniden eğitim yok)
+## A4 — Hata analizi (9–15 Kas; yeniden eğitim yok) — ✅ 19 Eki (B1–B8, EXPERIMENTS.md)
 - Sınıf × boyut AP; SP–MB–SC ve CS–CFO karışma oranları; sınıf başına FN/FP galerileri; IoU dağılımı (AP50 ile AP50:95 farkı).
 - Her bulgu: sayı + görüntü örneği → EXPERIMENTS.md "Bulgular".
 - **Bitti sayılır:** Q2 ve Q3 sayılarla cevaplandı; rapora girecek şekiller `reports/figures/`'da.
