@@ -3,6 +3,9 @@ _Son güncelleme: 2026-10-18 (cc)_
 
 **Aşama: A2 ✅ · A3 ✅ · A4 ✅ (bulgular EXPERIMENTS.md "Bulgular" B1–B8) · sırada A5 karar kapısı.** Plan: `docs/ROADMAP.md`.
 
+## Proje günlüğü (Word)
+`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm 2026-10-19 (12 bölüm, 6 şekil: eğitim eğrileri, karışıklık matrisi, IoU dağılımı, CS/MB→CFO/HB galerileri). Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
+
 ## Son yapılan (2026-10-19, cc) — A4 hata analizi
 - `scripts/analyze.py --run <run> --split test` → `analysis.json` + 4 tablo (`size_ap`, `size_recall`, `iou`, `confusion_pairs`) + 24 şekil (`iou_boxplot`, sınıf başına `gallery_fn_*` / `gallery_fp_*`, çift başına `gallery_pair_*`). Modüller `src/pcbdet/analysis/{gt_matching,size_analysis,iou_analysis,confusion_pairs,error_gallery,analyzer}.py`; 29 test.
 - Ana bulgular (ayrıntı EXPERIMENTS.md): CS'te zorluk boyuttan (küçük CS AP50 0,59, büyük 0,86) ve **kutu granülerliğinden** (uzun çizik tek kutu, model parçalı buluyor) geliyor; CFO'da boyuttan bağımsız; SP/MB lokalizasyonu zayıf (medyan IoU 0,75/0,77) → AP50:95 düşük; en sık karışmalar MB↔CFO ve SC↔SP (simetrik, küçük kutular), CFO→BMFO (tek yönlü); FP'lerin %51'i aslında sınıf karışması; **HB FP'leri (39/41 yakınında GT yok) etiket eksikliği adayı** → elle doğrulanacak.
