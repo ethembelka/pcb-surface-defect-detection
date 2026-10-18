@@ -40,6 +40,7 @@ def evaluate_run(
     run_id = run_dir.name
     weights = weights or run_dir / "weights" / "best.pt"
     model_name = model_name or _model_name_from_run(run_dir)
+    imgsz = run_imgsz(run_dir, cfg.imgsz)  # a 320 px model must be evaluated at 320 px
     out_dir = cfg.results_dir / run_id / split
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -53,13 +54,13 @@ def evaluate_run(
     pred_json = out_dir / "predictions.json"
     if overwrite or not pred_json.exists():
         get_detector(model_name).export_predictions(
-            weights, images, stem_to_id, pred_json, imgsz=cfg.imgsz, conf=cfg.conf,
+            weights, images, stem_to_id, pred_json, imgsz=imgsz, conf=cfg.conf,
             iou_nms=cfg.iou_nms, max_det=cfg.max_det, half=cfg.half, batch=cfg.batch,
         )
     preds = read_json(pred_json)
 
     # 3. COCO metrics
-    metrics: dict[str, Any] = {"run_id": run_id, "split": split, "n_images": len(images),
+    metrics: dict[str, Any] = {"run_id": run_id, "split": split, "imgsz": imgsz, "n_images": len(images),
                                "n_gt_boxes": len(gt["annotations"]), "n_predictions": len(preds)}
     metrics.update(coco_metrics(gt, preds))
 
@@ -88,7 +89,7 @@ def evaluate_run(
 
     # 6. efficiency (optional: slow, hardware dependent)
     if with_efficiency:
-        metrics["efficiency"] = efficiency(weights, images[:64], cfg.imgsz, cfg.eff_half, cfg.eff_warmup, cfg.eff_iters)
+        metrics["efficiency"] = efficiency(weights, images[:64], imgsz, cfg.eff_half, cfg.eff_warmup, cfg.eff_iters)
 
     # 7. snapshot
     write_json(metrics, out_dir / "metrics.json")
@@ -97,12 +98,20 @@ def evaluate_run(
     return metrics
 
 
-def _model_name_from_run(run_dir: Path) -> str:
-    """The ``model`` field of the run's config.yaml (written by the trainer); fallback: yolo."""
+def _run_train_cfg(run_dir: Path) -> dict[str, Any]:
+    """The ``train`` block of the run's config.yaml (written by the trainer); {} if missing."""
     cfg = run_dir / "config.yaml"
     if cfg.exists():
         from pcbdet.config import load_yaml
 
-        d = load_yaml(cfg)
-        return str(d.get("train", {}).get("model", "yolo"))
-    return "yolo"
+        return dict(load_yaml(cfg).get("train", {}))
+    return {}
+
+
+def _model_name_from_run(run_dir: Path) -> str:
+    return str(_run_train_cfg(run_dir).get("model", "yolo"))
+
+
+def run_imgsz(run_dir: Path, default: int) -> int:
+    """Image size the run was trained with (evaluation must use the same), else ``default``."""
+    return int(_run_train_cfg(run_dir).get("imgsz", default))

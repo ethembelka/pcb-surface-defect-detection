@@ -44,10 +44,9 @@ def main() -> None:
     run_dir = resolve_path(args.run)
     m = evaluate_run(run_dir, cfg, args.split, weights=resolve_path(args.weights) if args.weights else None,
                      with_efficiency=args.efficiency, overwrite=args.overwrite)
-    m["imgsz"] = cfg.imgsz
     files = write_report_tables(m, cfg.tables_dir, cfg.figures_dir, cfg.references, args.label or run_dir.name)
 
-    print(f"\n[{m['run_id']} / {m['split']}]  images {m['n_images']}  gt {m['n_gt_boxes']}  preds {m['n_predictions']}")
+    print(f"\n[{m['run_id']} / {m['split']}]  imgsz {m['imgsz']}  images {m['n_images']}  gt {m['n_gt_boxes']}  preds {m['n_predictions']}")
     print(f"  AP50 {m['map50']:.4f}  AP75 {m['ap75']:.4f}  AP50:95 {m['map50_95']:.4f}  "
           f"APs {m['ap_small']:.4f}  APm {m['ap_medium']:.4f}  APl {m['ap_large']:.4f}")
     print(f"  decision conf {m['decision_threshold']['conf']} (selected on {m['decision_threshold']['selected_on']}): "

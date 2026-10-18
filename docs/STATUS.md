@@ -66,7 +66,7 @@ _Son güncelleme: 2026-10-18 (cc)_
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
 1. Kullanıcı: Bulgular B1–B8'i oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
-2. A5 karar kapısı: 4,2 sa/eğitim (Colab) → öncelik: tohum 1–2 (ortalama ± std) → 320/1024 (B4'ü doğrudan sınar) → YOLO11n/m; sıra kullanıcıyla
+2. **A5 (karar verildi):** 320 px eğitimi yerelde (`configs/train/yolo11s_320.yaml`, run_id `yolo11s_320_s0`, ~3 sa) → val_internal → test (bir kez) → 640 ile karşılaştırma. İkinci eğitim (tohum 1) yalnızca Colab kotası açılırsa. Deneyler 1 hafta içinde kapanır; sonra rapor/sunum.
 3. Referans sayılarını makale PDF'inden bir kez daha doğrula (EVALUATION_PROTOCOL.md notu)
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)

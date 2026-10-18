@@ -30,6 +30,14 @@ def test_registry_resolves_yolo_and_rejects_unknown():
         get_detector("fasterrcnn.pt")
 
 
+def test_run_imgsz_read_from_run_config(tmp_path: Path):
+    from pcbdet.evaluation.evaluator import run_imgsz
+
+    run_dir = init_run_dir(tmp_path, "r320", {"train": {"model": "yolo11s.pt", "imgsz": 320}})
+    assert run_imgsz(run_dir, default=640) == 320
+    assert run_imgsz(tmp_path / "missing", default=640) == 640
+
+
 def test_train_config_defaults_and_paths(tmp_path: Path):
     yml = tmp_path / "t.yaml"
     yml.write_text("model: yolo11s.pt\ndata: configs/dspcbsd.yaml\nimgsz: 640\nepochs: 1\nbatch: 8\n", encoding="utf-8")

@@ -1,0 +1,17 @@
+# Input-resolution experiment (phase A5, research question 4): same as yolo11s_640.yaml but 320 px.
+# Tests how much upsampling the 226 px images helps (proposal, Method step 2; finding B4).
+# Run (local RTX 3060, ~3 h):  python scripts/train.py --config configs/train/yolo11s_320.yaml --run-id yolo11s_320_s0
+# Evaluation uses the run's own imgsz (read from the run's config.yaml), so no eval config change is needed.
+model: yolo11s.pt
+data: configs/dspcbsd.yaml
+imgsz: 320
+epochs: 100
+batch: 32                  # 320 px needs ~1/4 of the memory of 640 px; 32 fits in 6 GB
+seed: 0
+patience: 30
+workers: 4
+optimizer: auto
+cache: false
+fraction: 1.0
+project: outputs/runs
+device: auto
