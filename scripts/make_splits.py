@@ -18,21 +18,25 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 # Make ``import pcbdet`` work without installing the package (src layout).
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from pcbdet.config import SplitConfig  # noqa: E402
+from pcbdet.config import SplitConfig, resolve_path  # noqa: E402
 from pcbdet.data.splits import make_splits  # noqa: E402
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--config", default="configs/splits.yaml")
+    ap.add_argument("--yolo-root", default=None, help="override yolo_root (e.g. the unpacked data on Colab)")
     args = ap.parse_args()
 
     cfg = SplitConfig.from_yaml(args.config)
+    if args.yolo_root:
+        cfg = replace(cfg, yolo_root=resolve_path(args.yolo_root))
     stats = make_splits(cfg)
 
     print(f"source: {cfg.yolo_root} / {cfg.source_split}   seed={cfg.seed}  val_ratio={cfg.val_ratio}")

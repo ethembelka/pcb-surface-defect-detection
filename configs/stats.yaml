@@ -1,0 +1,13 @@
+# Dataset statistics (class x object-size table) — scripts/dataset_stats.py
+#
+# Box areas come from the COCO annotation files (pixel units, area == w*h, verified 2026-10-16).
+# Size buckets follow the COCO definition so that they match APs / APm / APl in evaluation:
+#   small  : area <  32*32 px
+#   medium : 32*32 <= area <= 96*96
+#   large  : area >  96*96
+# The three parts are: train_fit and val_internal (from data/splits lists, carved out of official
+# train) and test (= official val). Output: a CSV in reports/tables/ (report Table 1).
+coco_annotations_dir: data/DsPCBSD/DsPCBSD+/Data_COCO/annotations
+splits_dir: data/splits                  # train_fit.txt / val_internal.txt (image stems are matched by file name)
+size_thresholds: {small: 1024, large: 9216}   # 32*32 and 96*96 in px^2
+out_csv: reports/tables/dataset_stats.csv

@@ -1,11 +1,17 @@
-model: yolo11s.pt          # COCO ön eğitimli
+# Main run (phase A2): YOLO11s, 640 px, seed 0 — the result reported in the paper.
+# Run: python scripts/train.py --config configs/train/yolo11s_640.yaml
+# Model selection happens on val_internal (configs/dspcbsd.yaml); the official val split is
+# evaluated once, afterwards, with configs/dspcbsd_test.yaml.
+model: yolo11s.pt          # COCO-pretrained weights (downloaded by Ultralytics on first use)
 data: configs/dspcbsd.yaml
-imgsz: 640
+imgsz: 640                 # 226 px images are upsampled; see proposal for the reasoning
 epochs: 100
-batch: 32                  # Colab T4 için; yerel 6 GB'ta 8–16
+batch: 32                  # Colab T4; on the local 6 GB GPU use 16 (see smoke_local.yaml)
 seed: 0
-patience: 30
+patience: 30               # stop if val_internal mAP does not improve for 30 epochs
 workers: 4
 optimizer: auto
 cache: false
-val_split: val_internal    # model seçimi için; nihai rapor val_official
+fraction: 1.0              # full train_fit
+project: outputs/runs      # run directory: outputs/runs/<run_id>/
+device: auto

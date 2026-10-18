@@ -1,0 +1,17 @@
+# Smoke test on the local RTX 3060 (6 GB): checks the pipeline end to end and measures
+# seconds per epoch. NOT a reported run (fraction < 1). Phase A1, step 6.
+# Run: python scripts/train.py --config configs/train/smoke_local.yaml
+model: yolo11s.pt
+data: configs/dspcbsd.yaml
+imgsz: 640
+epochs: 2
+batch: 16                  # 6 GB VRAM; halve if CUDA runs out of memory
+seed: 0
+patience: 30
+workers: 4
+optimizer: auto
+cache: false
+fraction: 0.10             # 10 % of train_fit (~739 images); val_internal is used in full
+project: outputs/runs
+device: auto
+variant: smoke             # appended to the run_id so it is never mistaken for a real run

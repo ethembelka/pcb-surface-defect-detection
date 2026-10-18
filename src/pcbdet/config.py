@@ -102,3 +102,56 @@ class DatasetConfig:
     def to_ultralytics_dict(self) -> dict[str, Any]:
         """Dict ready to be dumped to a temporary yaml for Ultralytics (absolute ``path``)."""
         return {"path": str(self.path), "train": self.train, "val": self.val, "names": self.names}
+
+    def with_root(self, new_root: str | Path | None) -> "DatasetConfig":
+        """Same config with another dataset root (Colab unpacks the data elsewhere)."""
+        if new_root is None:
+            return self
+        return DatasetConfig(path=resolve_path(new_root), train=self.train, val=self.val, names=self.names)
+
+
+@dataclass(frozen=True)
+class TrainConfig:
+    """One training run (configs/train/*.yaml). Field names follow the Ultralytics arguments.
+
+    ``fraction`` < 1 trains on a subset — used only for the smoke test, never for reported runs.
+    """
+
+    model: str  # weights file or model name, e.g. "yolo11s.pt" (COCO-pretrained)
+    data: Path  # dataset yaml (configs/dspcbsd.yaml)
+    imgsz: int
+    epochs: int
+    batch: int
+    seed: int
+    patience: int  # early-stopping patience (epochs without val improvement)
+    workers: int  # dataloader processes
+    optimizer: str  # "auto" lets Ultralytics pick (SGD/AdamW) from the schedule
+    cache: bool  # cache images in RAM
+    fraction: float = 1.0
+    project: Path = Path("outputs/runs")  # run directories are created under here
+    device: str | None = None  # None -> auto (GPU if available)
+    variant: str = ""  # free label appended to the run_id, e.g. "smoke"
+
+    @staticmethod
+    def from_yaml(path: str | Path) -> "TrainConfig":
+        d = load_yaml(path)
+        return TrainConfig(
+            model=str(d["model"]),
+            data=resolve_path(d["data"]),
+            imgsz=int(d["imgsz"]),
+            epochs=int(d["epochs"]),
+            batch=int(d["batch"]),
+            seed=int(d.get("seed", 0)),
+            patience=int(d.get("patience", 100)),
+            workers=int(d.get("workers", 4)),
+            optimizer=str(d.get("optimizer", "auto")),
+            cache=bool(d.get("cache", False)),
+            fraction=float(d.get("fraction", 1.0)),
+            project=resolve_path(d.get("project", "outputs/runs")),
+            device=None if d.get("device") in (None, "auto") else str(d["device"]),
+            variant=str(d.get("variant", "")),
+        )
+
+    def as_dict(self) -> dict[str, Any]:
+        """Plain dict (paths as strings) for the config snapshot written next to the run."""
+        return {k: (str(v) if isinstance(v, Path) else v) for k, v in self.__dict__.items()}
