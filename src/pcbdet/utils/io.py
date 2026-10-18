@@ -23,8 +23,9 @@ def write_json(obj: Any, path: str | Path, indent: int = 2) -> Path:
     """Write ``obj`` as pretty JSON (UTF-8, non-ASCII kept readable); creates parent dirs."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:  # LF on every OS: same bytes on Colab and Windows
         json.dump(obj, f, indent=indent, ensure_ascii=False)
+        f.write("\n")
     return path
 
 
@@ -32,7 +33,7 @@ def write_yaml(obj: Any, path: str | Path) -> Path:
     """Write ``obj`` as YAML keeping key order (used for run config snapshots)."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         yaml.safe_dump(obj, f, sort_keys=False, allow_unicode=True)
     return path
 
