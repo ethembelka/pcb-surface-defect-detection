@@ -39,15 +39,15 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 - **Bitti sayılır:** `pytest -q` geçiyor; duman testi çalıştı; epoch süresi STATUS.md'de.
 - **Karar kapısı:** epoch süresine göre ana eğitim yerelde mi Colab'da mı (6 GB'ta YOLO11s 640 için batch 16 civarı).
 
-## A2 — Ana eğitim (26 Eki–1 Kas)
+## A2 — Ana eğitim (26 Eki–1 Kas) — ✅ 18–19 Eki (Colab T4, 4,2 sa, en iyi epoch 70)
 - YOLO11s, 640, tohum 0, 100 epoch, patience 30; seçim `val_internal`'da. Tahmini süre A1 ölçümünden hesaplanır, kullanıcıya sorulur.
 - **Bitti sayılır:** `best.pt` + eğitim eğrileri; toplam süre EXPERIMENTS.md'de.
 - **Karar kapısı:** toplam süre × kalan haftalar → A5'te hangi ek eğitimlerin sığacağı.
 
-## A3 — Değerlendirme (A2 sürerken yazılır; 2–8 Kas'ta koşulur)
+## A3 — Değerlendirme (A2 sürerken yazılır; 2–8 Kas'ta koşulur) — ✅ 19 Eki (test AP50 0,847 / AP50:95 0,506)
 1. ✅ (18 Eki) `export_predictions` (E3), `evaluation/coco_eval.py`, `per_class.py` (F1-maks eşik), `confusion.py` (arka plan dahil), `efficiency.py`, `evaluator.py`, `scripts/evaluate.py`.
 2. ✅ (18 Eki) Testler: id eşlemesi, F1-maks eşik seçimi, karışıklık eşlemesi (elle hesaplanmış küçük örnekler).
-3. Resmi val (test) üzerinde **bir kez** koş → `metrics.json`; `reporting/tables.py` → referanslarla ana tablo.
+3. ✅ (19 Eki) Resmi val (test) üzerinde **bir kez** koş → `metrics.json`; `reporting/tables.py` → referanslarla ana tablo.
 - **Bitti sayılır:** AP50, AP50:95, APs/m/l, sınıf bazlı P/R/F1, karışıklık matrisi, FPS hazır; sayılar Ultralytics'in kendi `val` çıktısıyla kabaca tutarlı (büyük fark varsa E3'ü kontrol et).
 
 ## A4 — Hata analizi (9–15 Kas; yeniden eğitim yok)

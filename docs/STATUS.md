@@ -1,7 +1,16 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A2 ana eğitim bitti · A3: val_internal değerlendirildi, eşik seçildi · test ölçümü kullanıcı onayı bekliyor.** Plan: `docs/ROADMAP.md`.
+**Aşama: A2 ✅ · A3 ✅ (test bir kez ölçüldü, EXPERIMENTS.md'de) · sırada A4 hata analizi.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-19, cc) — TEST sonucu (resmi val, bir kez, kullanıcı onayıyla)
+- `evaluate.py --split test --efficiency` → `outputs/results/yolo11s_640_s0/test/metrics.json`; tablolar/şekil `reports/`.
+- **AP50 0,847 · AP75 0,525 · AP50:95 0,506 · APs 0,402 · APm 0,573 · APl 0,605** (2.051 görüntü, 4.092 kutu, 32.474 tahmin).
+  Referanslar (resmi val): Co-DETR 0,848 / 0,490 / 0,492 / APs 0,425; YOLOv6-L6 0,851 / 0,525 / 0,514 / APs 0,405. → **640 px'te 9,4 M parametreyle referanslarla aynı seviyede**; APl'de geride (0,605 vs 0,67–0,68), APs eşit.
+- Eşik conf 0,33 (val_internal'dan): P 0,806 / R 0,813 / F1 0,810. Sınıf AP50: HB 0,979 · SH 0,916 · BMFO 0,890 · OP 0,885 · SP 0,849 · MB 0,842 · SC 0,814 · **CS 0,731 · CFO 0,720**. AP50:95'te SP 0,389 / CFO 0,408 / MB 0,420 en düşük.
+- En sık karışmalar (test): MB→CFO 14, SC→SP 12, CFO→MB 10, SP→SC 9, CFO→BMFO 9.
+- Verimlilik (3060 Laptop, fp16, batch 1): 9,43 M param, 21,57 GFLOPs, 25,6 ms/görüntü (39 FPS).
+- val_internal → test farkı: AP50 0,860 → 0,847 (−1,3), AP50:95 0,520 → 0,506; beklenen küçük genelleme farkı, aşırı uyum yok.
 
 ## Son yapılan (2026-10-19 gece, cc) — ana eğitim sonucu ve val_internal değerlendirmesi
 - **A2 bitti (Colab T4):** 100 epoch, 4 sa 10 dk (150 s/epoch), tepe VRAM 9,96 GB; erken durdurma uyarısı: en iyi epoch **70**, `best.pt` = epoch 70. Run klasörü `outputs/runs/yolo11s_640_s0/` (git hash 749aa9c ile eğitildi). Ultralytics val_internal: mAP50 0,864 / mAP50:95 0,529.
@@ -48,9 +57,9 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
-1. **Kullanıcı onayı → `evaluate.py --run outputs/runs/yolo11s_640_s0 --split test --efficiency` (bir kez)** → `log-experiment` → EXPERIMENTS.md
-2. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı
-3. A5 karar kapısı: 150 s/epoch × 100 = 4,2 sa/eğitim (Colab) → tohum 1–2, 320/1024, n/m sığar
+1. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı → EXPERIMENTS.md "Bulgular"
+2. A5 karar kapısı: 150 s/epoch × 100 = 4,2 sa/eğitim (Colab) → tohum 1–2, 320/1024, n/m sığar; sıra kullanıcıyla kararlaştırılacak
+3. Referans sayılarını makale PDF'inden bir kez daha doğrula (EVALUATION_PROTOCOL.md notu)
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)
 1. ~~`val_internal` kurulmamış~~ **Çözüldü (18 Eki):** `scripts/make_splits.py`, `configs/dspcbsd.yaml` (train_fit/val_internal), `configs/dspcbsd_test.yaml` (resmi val). Defter hâlâ eski akışta → E4 ile birlikte düzelecek.
