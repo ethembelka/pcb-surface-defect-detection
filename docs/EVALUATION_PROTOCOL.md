@@ -10,6 +10,15 @@
 Not: Literatürde çoğu çalışma resmi val'i hem model seçimi hem raporlama için kullanıyor. Biz model seçimini `val_internal` ile
 yapıp `val_official`'ı yalnızca raporlamada kullanıyoruz; karşılaştırma için ayrıca "resmi val ile seçilmiş" sonucu da (ek tablo) verebiliriz.
 
+## Tahminlerin üretilmesi (19.10.2026'da sabitlendi)
+Tahminler **Ultralytics doğrulama hattıyla** üretilir (`model.val(save_json=True)`): dikdörtgen letterbox (640 + kenar dolgusu),
+**sınıf bazlı (multi-label) NMS**, conf 0,001, NMS IoU 0,7, max_det 300, FP16. Gerekçe: (1) checkpoint seçimi bu hatla yapıldı;
+(2) referans dedektörler (Co-DETR/mmdet, YOLOv6) de sınıf bazlı NMS ile değerlendirilir; (3) aynı ağırlıklarla `model.predict`
+hattı (kutu başına tek etiket, dolgusuz) val_internal'da 2,6 AP50 puanı daha düşük verdi (0,834 vs 0,860) — iki hattı
+karıştırmak sonuçları karşılaştırılamaz yapar. Ultralytics'in json çıktısındaki `image_id` dosya adıdır (sayısal adlarda baştaki
+sıfırlar düşer); `data/coco.py::remap_ultralytics_ids` bunu COCO id'lerine çevirir. Metrikler her zaman pycocotools ile hesaplanır;
+Ultralytics'in kendi mAP'i yalnızca sağlama içindir (fark ≈ 0,4 puan).
+
 ## Metrikler
 | Grup | Metrik | Kaynak |
 |---|---|---|

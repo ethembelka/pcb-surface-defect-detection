@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 from pcbdet.config import DatasetConfig, TrainConfig
-from pcbdet.utils.io import write_json, write_yaml
+from pcbdet.utils.io import read_json, write_json, write_yaml
 
 
 class UltralyticsDetector:
@@ -103,33 +103,41 @@ class UltralyticsDetector:
         half: bool = True,
         batch: int = 32,
     ) -> Path:
-        """Run inference and write a COCO *results* json.
+        """Run inference with the Ultralytics *validator* pipeline and write a COCO results json.
 
-        Each detection becomes ``{"image_id", "category_id", "bbox": [x, y, w, h], "score"}`` with
-        ``image_id`` taken from ``stem_to_id`` (the COCO json's numeric ids, see data/coco.py) and
-        ``category_id = yolo_class + 1``. Boxes are in original-image pixels (Ultralytics undoes
-        the letterbox for us). Images without detections simply contribute nothing.
+        Why the validator and not ``model.predict``: the validator is the pipeline the checkpoint
+        was selected with (rectangular letterbox with padding, multi-label class-wise NMS, conf
+        0.001, NMS IoU 0.7) and it matches how reference detectors are evaluated (class-wise NMS).
+        ``predict`` (single label per box, no padding) gave ~2.6 AP50 points less on the same
+        weights (measured 2026-10-19), so mixing the two would make our numbers incomparable.
+
+        The validator's ``save_json`` output uses the image *file stem* as ``image_id`` (and drops
+        leading zeros of numeric stems); we rewrite it to the COCO json's numeric ids via
+        ``stem_to_id`` (see data/coco.py). ``category_id`` is already 1-based in that file.
         """
+        import tempfile
+
         from ultralytics import YOLO
 
+        from pcbdet.data.coco import remap_ultralytics_ids
+
+        work = Path(tempfile.mkdtemp(prefix="pcbdet_val_"))
+        list_file = work / "images.txt"
+        list_file.write_text("".join(f"{p.resolve()}\n" for p in image_paths), encoding="utf-8")
+        data_yaml = write_yaml({"path": str(work), "train": "images.txt", "val": "images.txt",
+                                "names": {i: n for i, n in enumerate(_class_names())}}, work / "data.yaml")
+
         model = YOLO(str(weights))
-        results: list[dict] = []
-        for i in range(0, len(image_paths), batch):
-            chunk = [str(p) for p in image_paths[i : i + batch]]
-            outs = model.predict(chunk, imgsz=imgsz, conf=conf, iou=iou_nms, max_det=max_det,
-                                 half=half, verbose=False)
-            for p, r in zip(image_paths[i : i + batch], outs):
-                image_id = stem_to_id[p.stem]
-                xyxy = r.boxes.xyxy.cpu().numpy()
-                confs = r.boxes.conf.cpu().numpy()
-                clss = r.boxes.cls.cpu().numpy().astype(int)
-                for (x1, y1, x2, y2), s, c in zip(xyxy, confs, clss):
-                    results.append({
-                        "image_id": image_id,
-                        "category_id": int(c) + 1,
-                        "bbox": [round(float(x1), 2), round(float(y1), 2),
-                                 round(float(x2 - x1), 2), round(float(y2 - y1), 2)],
-                        "score": round(float(s), 5),
-                    })
+        model.val(data=str(data_yaml), split="val", imgsz=imgsz, batch=batch, workers=0, conf=conf,
+                  iou=iou_nms, max_det=max_det, half=half, save_json=True, plots=False, verbose=False,
+                  project=str(work), name="val", exist_ok=True)
+        raw = read_json(work / "val" / "predictions.json")
+        results = remap_ultralytics_ids(raw, stem_to_id)
         write_json(results, out_json, indent=None)
         return out_json
+
+
+def _class_names() -> tuple[str, ...]:
+    from pcbdet.data.classes import CLASS_NAMES
+
+    return CLASS_NAMES

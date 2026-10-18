@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from pcbdet.data.coco import filter_gt, stem_to_image_id
+from pcbdet.data.coco import filter_gt, remap_ultralytics_ids, stem_to_image_id
 from pcbdet.evaluation.coco_eval import coco_metrics
 from pcbdet.evaluation.confusion import BG, confusion_matrix, normalize_rows, top_confusions
 from pcbdet.evaluation.matching import best_f1_threshold, iou_matrix, match_per_class, prf_at_threshold
@@ -102,6 +102,21 @@ def test_stem_to_image_id_and_filter():
     assert [im["id"] for im in sub["images"]] == [7] and len(sub["annotations"]) == 1
     with pytest.raises(ValueError):
         stem_to_image_id({"images": [{"id": 0, "file_name": "a.jpg"}, {"id": 1, "file_name": "a.png"}]})
+
+
+def test_remap_ultralytics_ids_handles_leading_zeros_and_strings():
+    s2id = {"0003730": 7, "Y_011791": 0, "0000900": 3}
+    raw = [{"image_id": 3730, "category_id": 2, "bbox": [1, 2, 3, 4], "score": 0.5},
+           {"image_id": "Y_011791", "category_id": 1, "bbox": [0, 0, 1, 1], "score": 0.9},
+           {"image_id": 900, "category_id": 9, "bbox": [0, 0, 1, 1], "score": 0.1}]
+    out = remap_ultralytics_ids(raw, s2id)
+    assert [o["image_id"] for o in out] == [7, 0, 3]
+    assert out[0]["category_id"] == 2  # already 1-based, unchanged
+    with pytest.raises(KeyError):
+        remap_ultralytics_ids([{"image_id": 42, "category_id": 1, "bbox": [0, 0, 1, 1], "score": 0.1}], s2id)
+    with pytest.raises(KeyError):  # ambiguous: "0042" and "42" both exist
+        remap_ultralytics_ids([{"image_id": 42, "category_id": 1, "bbox": [0, 0, 1, 1], "score": 0.1}],
+                              {"0042": 1, "42": 2})
 
 
 def test_coco_metrics_perfect_and_empty():

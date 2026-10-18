@@ -1,6 +1,8 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-19 (cc): **Tahminler Ultralytics doğrulama hattıyla üretilir** (multi-label NMS, dikdörtgen letterbox), metrikler pycocotools ile. `model.predict` hattı aynı ağırlıklarda 2,6 AP50 puanı düşük verdi; checkpoint seçimi ve referanslarla tutarlılık için val hattı seçildi (EVALUATION_PROTOCOL.md).
+- 2026-10-19 (cc): Ana eğitim tamamlandı (Colab T4, 100 epoch, 4,2 sa, en iyi epoch 70). val_internal pycocotools AP50 0,860 / AP50:95 0,520; karar eşiği conf 0,33.
 - 2026-10-18 (cc): **Ana eğitim Colab'da** (kullanıcı kararı). Gerekçe: yerel 3060'ta ≈6 dk/epoch → 5–10 saat ve bilgisayar meşgul; Colab T4'te batch 32 sığar, oturum koparsa `--resume`. Duman testi yerelde yapıldı (48 s/epoch @ %10 veri, 4,8 GB VRAM).
 - 2026-10-18 (cc): Yol haritası `docs/ROADMAP.md`: A1 altyapı → A2 ana eğitim → A3 değerlendirme → A4 hata analizi → A5 ek eğitimler → A6 rapor; kod dondurma 6 Aralık.
 - 2026-10-16 (sohbet): Öneri revize: 9 kusur türü tabloyla açıklandı; ayrım kuralı (train %90 / iç doğrulama %10 / resmi val = test) ve 640 px büyütmenin gerekçesi yazıldı; ek eğitimler ana eğitim süresi ölçüldükten sonra seçilecek.

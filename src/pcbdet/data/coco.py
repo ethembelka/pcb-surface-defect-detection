@@ -46,6 +46,35 @@ def stem_to_image_id(coco: dict[str, Any]) -> dict[str, int]:
     return m
 
 
+def remap_ultralytics_ids(raw: list[dict], stem_to_id: dict[str, int]) -> list[dict]:
+    """Rewrite the ``image_id`` of an Ultralytics ``save_json`` file to COCO ids.
+
+    Ultralytics writes ``image_id = int(stem)`` when the stem is numeric (so ``0003730`` becomes
+    ``3730``) and the stem string otherwise (``Y_011791``). We therefore look up both the exact
+    stem and, for numeric ones, the zero-stripped form. Ambiguity (two stems differing only in
+    leading zeros) raises instead of silently mis-assigning.
+    """
+    by_stripped: dict[str, list[str]] = {}
+    for stem in stem_to_id:
+        if stem.isdigit():
+            by_stripped.setdefault(stem.lstrip("0") or "0", []).append(stem)
+    out = []
+    for p in raw:
+        key = str(p["image_id"])
+        if key.isdigit():  # numeric id: every stem that strips to it is a candidate, must be unique
+            cands = by_stripped.get(key.lstrip("0") or "0", [])
+            if len(cands) != 1:
+                raise KeyError(f"cannot map Ultralytics image_id {key!r} to a unique COCO image (candidates {cands})")
+            stem = cands[0]
+        elif key in stem_to_id:
+            stem = key
+        else:
+            raise KeyError(f"Ultralytics image_id {key!r} not found among COCO image stems")
+        out.append({"image_id": stem_to_id[stem], "category_id": int(p["category_id"]),
+                    "bbox": [round(float(v), 2) for v in p["bbox"]], "score": round(float(p["score"]), 5)})
+    return out
+
+
 def filter_gt(coco: dict[str, Any], stems: set[str]) -> dict[str, Any]:
     """COCO dict restricted to the images whose stems are in ``stems`` (keeps original ids)."""
     images = [im for im in coco["images"] if Path(im["file_name"]).stem in stems]

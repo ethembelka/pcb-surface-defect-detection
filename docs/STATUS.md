@@ -1,7 +1,14 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A2 ana eğitim Colab'da koşuyor · A3 değerlendirme kodu hazır (test'te henüz çalıştırılmadı).** Plan: `docs/ROADMAP.md`.
+**Aşama: A2 ana eğitim bitti · A3: val_internal değerlendirildi, eşik seçildi · test ölçümü kullanıcı onayı bekliyor.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-19 gece, cc) — ana eğitim sonucu ve val_internal değerlendirmesi
+- **A2 bitti (Colab T4):** 100 epoch, 4 sa 10 dk (150 s/epoch), tepe VRAM 9,96 GB; erken durdurma uyarısı: en iyi epoch **70**, `best.pt` = epoch 70. Run klasörü `outputs/runs/yolo11s_640_s0/` (git hash 749aa9c ile eğitildi). Ultralytics val_internal: mAP50 0,864 / mAP50:95 0,529.
+- **Tahmin hattı kararı:** `export_predictions` artık `model.predict` değil Ultralytics doğrulama hattını (`model.val(save_json=True)`, multi-label NMS, dikdörtgen letterbox) kullanıyor. Teşhis: aynı ağırlıklarla predict hattı pycocotools'ta 0,834, val hattı 0,860; multi-label ~0,8 puan, letterbox/dolgu ~1,8 puan. Gerekçe EVALUATION_PROTOCOL.md'de. Ultralytics json'undaki `image_id` (dosya kökü, baştaki sıfırlar düşmüş) `remap_ultralytics_ids` ile COCO id'sine çevriliyor (testli).
+- **val_internal (pycocotools):** AP50 **0,8604** · AP75 0,534 · AP50:95 **0,520** · APs 0,419 · APm 0,632 · APl 0,531. Karar eşiği (F1-maks) **conf 0,33** → P 0,823 / R 0,833 / F1 0,828. Sınıf AP50: HB 0,99 · OP 0,95 · SH 0,93 · MB 0,87 · SC 0,85 · SP 0,84 · BMFO 0,83 · **CS 0,76 · CFO 0,72**. SP/MB AP50:95 düşük (0,38/0,41) → küçük nesne lokalizasyonu. En sık karışmalar: MB→OP 7, MB→CFO 7, SC→SP 4, CFO→SC 4, BMFO→SC 4.
+- Windows notu: Ultralytics val `workers=0` ile çağrılıyor (çoklu işçi, `__main__` korumasız betiklerde takılıyor).
+- Testler: 25 geçiyor.
 
 ## Son yapılan (2026-10-18 gece, cc) — A3 değerlendirme kodu
 - `scripts/evaluate.py --run <run_dir> --split {val_internal,test} [--efficiency]` → `outputs/results/<run_id>/<split>/{predictions.json, metrics.json, config.yaml, git_hash.txt}` + `reports/tables/{main_results,per_class}_<run>_<split>.csv` + `reports/figures/confusion_matrix_<run>_<split>.png`.
@@ -41,10 +48,9 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
-1. Öneriyi gönder (kullanıcı, 18 Ekim)
-2. Colab eğitimi bitince run klasörünü `outputs/runs/yolo11s_640_s0/` altına indir (kullanıcı); `train_summary.json` ve `results.csv`'yi kaydet → `log-experiment`
-3. `evaluate.py --split val_internal` (eşik seçimi) → kullanıcı onayı → `evaluate.py --split test --efficiency` (**bir kez**) → EXPERIMENTS.md
-4. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı
+1. **Kullanıcı onayı → `evaluate.py --run outputs/runs/yolo11s_640_s0 --split test --efficiency` (bir kez)** → `log-experiment` → EXPERIMENTS.md
+2. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı
+3. A5 karar kapısı: 150 s/epoch × 100 = 4,2 sa/eğitim (Colab) → tohum 1–2, 320/1024, n/m sığar
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)
 1. ~~`val_internal` kurulmamış~~ **Çözüldü (18 Eki):** `scripts/make_splits.py`, `configs/dspcbsd.yaml` (train_fit/val_internal), `configs/dspcbsd_test.yaml` (resmi val). Defter hâlâ eski akışta → E4 ile birlikte düzelecek.

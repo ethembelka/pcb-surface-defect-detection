@@ -1,0 +1,7 @@
+model,input,split,ap50,ap75,ap50_95,ap_small,ap_medium,ap_large,comparable
+YOLO11s (ours),640,val_internal,0.86038,0.53434,0.51978,0.4193,0.63238,0.53081,ours
+Co-DETR (Lv 2024),1333x800,official val,0.848,0.49,0.492,0.425,0.554,0.671,yes
+YOLOv6-L6 (Lv 2024),1280x1280,official val,0.851,0.525,0.514,0.405,0.597,0.681,yes
+PCB-FS (Wang 2025),n/a,official val,0.862,,0.524,,,,no (different split/protocol)
+PCB-MMF (Jin 2026),n/a,official val,0.854,,,,,,no (different split/protocol)
+VisDefectNet (Xia 2026),n/a,official val,0.859,,,,,,no (different split/protocol)
