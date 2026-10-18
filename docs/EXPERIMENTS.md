@@ -4,3 +4,6 @@ Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sonuç sayıl
 
 | run_id | tarih | model | imgsz | epoch | tohum | ortam | mAP50 | mAP50:95 | APs | not |
 |---|---|---|---|---|---|---|---|---|---|---|
+
+## Bulgular
+_Hata analizi (`error-analysis` skill'i) buraya kısa maddeler ekler: görüntü düzeyinde gözlem + sayı._

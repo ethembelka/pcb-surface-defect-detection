@@ -1,6 +1,8 @@
 # Veri ve büyük çıktılar git'e girmez (klasör yapısı .gitkeep ile korunur)
 data/*/*
 !data/*/.gitkeep
+# train_fit / val_internal lists are small and tracked (gitignore has no inline comments)
+!data/splits/*
 outputs/*/*
 !outputs/*/.gitkeep
 *.pt

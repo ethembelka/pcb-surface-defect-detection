@@ -1,6 +1,9 @@
-ultralytics>=8.3
+ultralytics==8.3.101   # pinned: same version locally and on Colab (reproducibility)
 pycocotools
+numpy
 pandas
 matplotlib
 seaborn
 opencv-python
+pyyaml
+pytest

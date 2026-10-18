@@ -1,0 +1,32 @@
+{
+  "source_split": "train",
+  "val_ratio": 0.1,
+  "seed": 0,
+  "n_total": 8208,
+  "n_train_fit": 7387,
+  "n_val_internal": 821,
+  "images_per_class": {
+    "train_fit": {
+      "SH": 430,
+      "SP": 1577,
+      "SC": 971,
+      "OP": 1040,
+      "MB": 1338,
+      "HB": 917,
+      "CS": 1076,
+      "CFO": 936,
+      "BMFO": 1065
+    },
+    "val_internal": {
+      "SH": 48,
+      "SP": 179,
+      "SC": 101,
+      "OP": 106,
+      "MB": 144,
+      "HB": 102,
+      "CS": 132,
+      "CFO": 107,
+      "BMFO": 114
+    }
+  }
+}

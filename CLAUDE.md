@@ -56,6 +56,7 @@ açısından ayrıntılı analiz etmek. Hoca "uygulama değil bilimsel proje" is
 data/raw/DsPCBSD+.zip          # indirilen zip (git'e girmez)
 data/DsPCBSD/DsPCBSD+/
   Data_YOLO/{images,labels}/{train,val}   # YOLO eğitimi bunu kullanır
+  Data_YOLO/{train_fit,val_internal}.txt  # scripts/make_splits.py üretir (kopya; aslı data/splits/ altında, git'te)
   Data_COCO/annotations/instances_{train,val}2017.json   # COCO değerlendirmesi (pycocotools) için gerçek etiketler
   Data_COCO/{train2017,val2017}/
   Hash.py                                  # yazarların benzer görüntü ayıklama betiği; ÇALIŞTIRMA (dosya taşır)
@@ -63,7 +64,7 @@ data/DsPCBSD/DsPCBSD+/
 Klasör adı farklı çıkarsa `configs/dspcbsd.yaml` içindeki `path` güncellenir. Colab için aynı zip Drive'da `MyDrive/CMPE7144_PCB/data/` altına.
 
 ## Veri
-DsPCBSD+: 10.259 görüntü (226×226), 20.276 kutu, 9 sınıf: SH, SP, SC, OP, MB, HB, CS, CFO, BMFO.
+DsPCBSD+: 10.259 görüntü (226×226; 111'i 108×108 — train 86, val 25), 20.276 kutu, 9 sınıf: SH, SP, SC, OP, MB, HB, CS, CFO, BMFO.
 Resmi ayrım train 8.208 / val 2.051, ayrı test yok. %67 küçük nesne. CC BY 4.0.
 İndirme: https://doi.org/10.6084/m9.figshare.24970329 → `data/raw/`, açılmış hali `data/DsPCBSD/`.
 Sınıf sırası doğrulandı: YOLO id = COCO category_id − 1. Kutu sayıları train 16.184 / val 4.092; en az SH (746), en çok SP (3.655).

@@ -20,21 +20,21 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 | # | Eksik | Nerede | Ne yapılacak | Aşama |
 |---|---|---|---|---|
 | E1 | Hiç kod yok | `src/pcbdet/`, `scripts/`, `tests/` | ARCHITECTURE.md'deki modülleri sırayla yaz | A1–A4 |
-| E2 | `val_internal` kurulmamış; eğitim resmi val'e bakıyor | `configs/dspcbsd.yaml`, `src/pcbdet/data/splits.py` | Train'i %90/%10 böl (tohum 0, sınıf varlığına göre dengeli) → `data/splits/{train_fit,val_internal}.txt`; eğitim yaml'ı `train: train_fit.txt`, `val: val_internal.txt`. Resmi val sadece `configs/dspcbsd_test.yaml` ile | A1 |
+| E2 | ✅ (18 Eki) `val_internal` kurulmamış; eğitim resmi val'e bakıyor | `configs/dspcbsd.yaml`, `src/pcbdet/data/splits.py` | Train'i %90/%10 böl (tohum 0, sınıf varlığına göre dengeli) → `data/splits/{train_fit,val_internal}.txt`; eğitim yaml'ı `train: train_fit.txt`, `val: val_internal.txt`. Resmi val sadece `configs/dspcbsd_test.yaml` ile | A1 |
 | E3 | pycocotools `image_id` eşlemesi yok (dosya adları `Y_011791.jpg`, COCO id sayısal) | `models/ultralytics_detector.py → export_predictions` | Dosya adı → COCO id sözlüğü `instances_val2017.json`'dan; test yaz | A3 |
 | E4 | Colab defteri ayarları elle yazılı | `notebooks/colab_train.ipynb` | `scripts/train.py --config configs/train/<x>.yaml` çağırsın; ayar tek kaynakta | A1 |
-| E5 | Ultralytics sürümü sabit değil (yerel 8.3.101) | `requirements.txt` | `ultralytics==8.3.101`; Colab da aynı sürümü kursun | A1 |
-| E6 | "226×226" ifadesi eksik: 111 görüntü 108×108 | `CLAUDE.md`, rapor | İfadeyi düzelt; boyut analizinde ayrıca belirt | A1 |
-| E7 | `docs/EXPERIMENTS.md`'de "Bulgular" bölümü yok (error-analysis skill'i oraya yazıyor) | `docs/EXPERIMENTS.md` | Başlığı ekle | A1 |
+| E5 | ✅ (18 Eki) Ultralytics sürümü sabit değil (yerel 8.3.101) | `requirements.txt` | `ultralytics==8.3.101`; Colab da aynı sürümü kursun | A1 |
+| E6 | ✅ (18 Eki) "226×226" ifadesi eksik: 111 görüntü 108×108 | `CLAUDE.md`, rapor | İfadeyi düzelt; boyut analizinde ayrıca belirt | A1 |
+| E7 | ✅ (18 Eki) `docs/EXPERIMENTS.md`'de "Bulgular" bölümü yok (error-analysis skill'i oraya yazıyor) | `docs/EXPERIMENTS.md` | Başlığı ekle | A1 |
 | E8 | IEEE rapor şablonu ve sunum iskeleti yok | `reports/paper/` (yeni) | IEEEtran şablonu; bölüm başlıkları öneriden | A6 |
 | E9 | Hoca onayı bekleniyor | — | Öneri gönderildikten sonra cevabı DECISIONS.md'ye yaz | 0 |
 
 ## A1 — Altyapı (19–25 Eki)
-1. `config.py` (YAML → dataclass), `data/classes.py`, `utils/{io,seed,run}.py` (run_id + git hash).
-2. `data/splits.py` + `scripts/make_splits.py` → E2. `tests/test_splits.py`: kesişim yok, toplam 8.208, her sınıf iki tarafta da var.
+1. ✅ `config.py` (YAML → dataclass), `data/classes.py`, `utils/{io,seed,run}.py` (run_id + git hash).
+2. ✅ `data/splits.py` + `scripts/make_splits.py` → E2. `tests/test_splits.py`: kesişim yok, toplam 8.208, her sınıf iki tarafta da var.
 3. `data/stats.py` + `scripts/dataset_stats.py`: sınıf × boyut tablosu (rapor Tablo 1 olur).
 4. `models/base.py`, `models/ultralytics_detector.py` (train), `models/registry.py`, `engine/trainer.py`, `scripts/train.py`.
-5. E4, E5, E6, E7.
+5. E4 (E5, E6, E7 ✅).
 6. **Duman testi (yerel):** 2 epoch, `fraction` küçük → hata yok, çıktılar `outputs/runs/<run_id>/`'de, **epoch süresi ölçüldü**.
 - **Bitti sayılır:** `pytest -q` geçiyor; duman testi çalıştı; epoch süresi STATUS.md'de.
 - **Karar kapısı:** epoch süresine göre ana eğitim yerelde mi Colab'da mı (6 GB'ta YOLO11s 640 için batch 16 civarı).

@@ -1,0 +1,16 @@
+# DsPCBSD+ dataset config — FINAL REPORTING ONLY (test = official val split, 2 051 images).
+# Never used during training or checkpoint selection (docs/EVALUATION_PROTOCOL.md).
+# `train` is required by Ultralytics but is never read in evaluation; it points to train_fit for completeness.
+path: data/DsPCBSD/DsPCBSD+/Data_YOLO
+train: train_fit.txt
+val: images/val
+names:
+  0: SH
+  1: SP
+  2: SC
+  3: OP
+  4: MB
+  5: HB
+  6: CS
+  7: CFO
+  8: BMFO

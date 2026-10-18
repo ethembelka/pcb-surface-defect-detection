@@ -1,0 +1,10 @@
+# Internal split of the official train set (docs/EVALUATION_PROTOCOL.md).
+# Official val is never touched here; it is used only through configs/dspcbsd_test.yaml.
+yolo_root: data/DsPCBSD/DsPCBSD+/Data_YOLO   # contains images/{train,val}, labels/{train,val}
+source_split: train
+val_ratio: 0.10          # share of train images held out as val_internal (stratified by rarest class)
+seed: 0
+out_dir: data/splits     # list files are small and tracked in git
+train_list: train_fit.txt
+val_list: val_internal.txt
+stats_file: split_stats.json

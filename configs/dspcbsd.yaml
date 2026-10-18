@@ -1,9 +1,13 @@
-# DsPCBSD+ dataset config for Ultralytics YOLO.
+# DsPCBSD+ dataset config for Ultralytics YOLO — TRAINING / MODEL SELECTION.
+# train = train_fit (90 % of official train), val = val_internal (10 %); lists made by scripts/make_splits.py
+# (tracked copy: data/splits/, copy read by Ultralytics: <path>/ — identical content; "./" in a list = the list's dir).
+# The official val split is NOT referenced here; it is used only via configs/dspcbsd_test.yaml for final reporting.
 # Sınıf sırası doğrulandı (15.10.2026): YOLO id = COCO category_id - 1; COCO: 1 SH ... 9 BMFO.
-# Komutlar depo kökünden çalıştırılır; yol depo köküne göredir.
-path: data/DsPCBSD/DsPCBSD+/Data_YOLO   # Colab'da defter bu yolu kendisi değiştirir
-train: images/train
-val: images/val
+# `path` is relative to the repo root; pcbdet.config.DatasetConfig makes it absolute before Ultralytics sees it
+# (Ultralytics resolves a relative `path` against its own datasets dir, not the repo).
+path: data/DsPCBSD/DsPCBSD+/Data_YOLO
+train: train_fit.txt
+val: val_internal.txt
 names:
   0: SH
   1: SP
