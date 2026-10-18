@@ -1,11 +1,40 @@
-split: val_official
-imgsz: 640
-conf_for_map: 0.001        # mAP hesabı için düşük eşik (standart)
-iou_nms: 0.6
-iou_match: 0.5             # karışıklık matrisi eşleme eşiği
-conf_for_decision: auto    # F1'i maksimize eden eşik
-fps:
+# Evaluation settings (docs/EVALUATION_PROTOCOL.md) — scripts/evaluate.py
+#
+# Two evaluation targets:
+#   val_internal : 10 % of official train; used to pick the decision threshold (F1-max) and for
+#                  smoke checks. Never reported as the final result.
+#   test         : official val split (2 051 images); evaluated ONCE per trained model.
+# Ground truth always comes from the COCO json files (pixel boxes), not from the YOLO txt labels.
+datasets:
+  val_internal: configs/dspcbsd.yaml        # its `val` entry is the val_internal list
+  test: configs/dspcbsd_test.yaml           # its `val` entry is images/val (official val)
+coco_annotations_dir: data/DsPCBSD/DsPCBSD+/Data_COCO/annotations
+coco_json:
+  val_internal: instances_train2017.json    # filtered to the val_internal stems at run time
+  test: instances_val2017.json
+
+inference:
+  imgsz: 640
+  conf: 0.001            # low threshold for mAP (standard; same as Ultralytics val)
+  iou_nms: 0.7           # NMS IoU (Ultralytics val default)
+  max_det: 300
+  half: true
+  batch: 32
+
+matching:
+  iou_match: 0.5         # a prediction and a GT box are "the same object" if IoU >= 0.5
+decision:
+  mode: f1_max           # P / R / F1 are reported at the confidence that maximises micro-F1 ...
+  select_on: val_internal  # ... selected on val_internal, applied unchanged to test
+  grid_step: 0.01
+
+efficiency:
   batch: 1
   half: true
   warmup: 50
   iters: 500
+
+results_dir: outputs/results      # outputs/results/<run_id>/<split>/
+tables_dir: reports/tables
+figures_dir: reports/figures
+references: configs/references.yaml

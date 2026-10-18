@@ -1,7 +1,21 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A1 (Altyapı) tamamlandı — karar kapısı bekliyor (ana eğitim yerel mi Colab mı).** Plan: `docs/ROADMAP.md`. Yerel ortam hazır: Python 3.13, torch 2.6 + CUDA (RTX 3060 6 GB), ultralytics 8.3.101, pycocotools.
+**Aşama: A2 ana eğitim Colab'da koşuyor · A3 değerlendirme kodu hazır (test'te henüz çalıştırılmadı).** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-18 gece, cc) — A3 değerlendirme kodu
+- `scripts/evaluate.py --run <run_dir> --split {val_internal,test} [--efficiency]` → `outputs/results/<run_id>/<split>/{predictions.json, metrics.json, config.yaml, git_hash.txt}` + `reports/tables/{main_results,per_class}_<run>_<split>.csv` + `reports/figures/confusion_matrix_<run>_<split>.png`.
+- Modüller: `data/coco.py` (ayrım görüntüleri, **dosya adı → COCO image_id eşlemesi — E3 çözüldü**, filtrelenmiş GT), `evaluation/matching.py` (IoU, açgözlü sınıf-bazlı eşleme), `coco_eval.py` (pycocotools: AP50/75/50:95, APs/m/l, AR, sınıf bazlı AP), `per_class.py` (F1-maks eşik **val_internal'da seçilir, test'te aynen uygulanır**), `confusion.py` (arka plan dahil 10×10), `efficiency.py` (param, GFLOPs, FPS), `evaluator.py`, `reporting/tables.py` (referanslar `configs/references.yaml`'dan). `UltralyticsDetector.export_predictions` COCO sonuç json'u yazar (conf 0,001, NMS IoU 0,7, max_det 300).
+- **Sağlama (duman modeli, val_internal):** pycocotools AP50 **0,1935** / AP50:95 **0,0892** ↔ Ultralytics'in aynı model için verdiği 0,199 / 0,0898. Sınıf bazında da tutarlı (HB 0,451 ↔ 0,452). Yani id eşlemesi doğru. F1-maks eşik 0,28. Verimlilik (3060, fp16, batch 1): 9,43 M param, 21,6 GFLOPs, 25,7 ms/görüntü (38,9 FPS).
+- Test ayrımı için GT yükleme doğrulandı (2.051 görüntü, 4.092 kutu); **test'te tahmin henüz çalıştırılmadı** (eğitim bitince, bir kez).
+- Testler: 24 geçiyor (`test_eval.py`: IoU, eşleme, F1-maks eşik, karışıklık matrisi, id eşlemesi, pycocotools).
+- Not: `predictions.json` ~23 MB (821 görüntü × 300 kutu); `outputs/` git dışı. Smoke run'ın rapor dosyaları `reports/` altından silindi (gerçek run'lar kalacak).
+
+## A2 ana eğitim — Colab (2026-10-18 ~18:55 başladı)
+- Tesla T4 (15 GB), torch 2.11+cu130 (yerelde 2.6), ultralytics 8.3.101, 2 dataloader worker. `run_id = yolo11s_640_s0`, çıktılar Drive `CMPE7144_PCB/runs/yolo11s_640_s0/`.
+- Epoch 1: 2 dk 26 sn + val 9 sn ≈ **2,6 dk/epoch** → 100 epoch ≈ 4 sa 20 dk. GPU 7,7–9,9 GB. Epoch 1 val_internal mAP50 (Ultralytics) **0,441**.
+- Colab defteri ilk gerçek çalıştırmada sorunsuz (hücre 6'daki fark yalnızca CRLF idi → `io.py` LF'ye sabitlendi, f38dfc9).
+- Bitince: `runs/yolo11s_640_s0/` Drive'dan → `outputs/runs/yolo11s_640_s0/` (best.pt, results.csv, grafikler); sonra `evaluate.py --split val_internal` → `--split test --efficiency` (bir kez, kullanıcı onayıyla).
 
 ## Son yapılan (2026-10-18 akşam, cc) — A1 ikinci yarı
 - `data/stats.py` + `scripts/dataset_stats.py` → `reports/tables/dataset_stats.csv` (sınıf × boyut, üç ayrım). Çarpıcı: SP %97,7 ve MB %95,3 küçük; HB %1,3 küçük (hemen hepsi orta); CS %29,5 küçük, büyük kutuların çoğu CS'te.
@@ -25,15 +39,15 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Proje önerisi PDF'i hazır (kullanıcı okuyup gönderecek)
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
-## Sıradaki (ayrıntı: ROADMAP.md → A2)
+## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
 1. Öneriyi gönder (kullanıcı, 18 Ekim)
-2. **Karar kapısı (kullanıcı):** ana eğitim yerelde (gece, ≈5–10 saat, batch 16) mi Colab'da (batch 32, oturum kopabilir) mı? Karar DECISIONS.md'ye.
-3. A2 ana eğitim: `configs/train/yolo11s_640.yaml` (Colab) ya da yerel için batch 16 kopyası; `run_id` sabit → `yolo11s_640_s0`
-4. A2 sürerken A3 değerlendirme kodunu yaz (`export_predictions` + image_id eşlemesi, pycocotools, per_class, confusion)
+2. Colab eğitimi bitince run klasörünü `outputs/runs/yolo11s_640_s0/` altına indir (kullanıcı); `train_summary.json` ve `results.csv`'yi kaydet → `log-experiment`
+3. `evaluate.py --split val_internal` (eşik seçimi) → kullanıcı onayı → `evaluate.py --split test --efficiency` (**bir kez**) → EXPERIMENTS.md
+4. A4 hata analizi: sınıf × boyut AP, karışma çiftleri, FN/FP galerileri, IoU dağılımı
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)
 1. ~~`val_internal` kurulmamış~~ **Çözüldü (18 Eki):** `scripts/make_splits.py`, `configs/dspcbsd.yaml` (train_fit/val_internal), `configs/dspcbsd_test.yaml` (resmi val). Defter hâlâ eski akışta → E4 ile birlikte düzelecek.
-2. **pycocotools `image_id` eşlemesi:** dosya adları sayısal değil (`Y_011791.jpg`, COCO id 0). Ultralytics `save_json` `image_id` olarak dosya kökünü yazar → `export_predictions` içinde dosya adı → COCO id eşlemesi şart; test yazılmalı. (A3)
+2. ~~pycocotools `image_id` eşlemesi~~ **Çözüldü (18 Eki):** `data/coco.py::stem_to_image_id` + `export_predictions`; pycocotools ↔ Ultralytics mAP sağlaması tutuyor; `test_eval.py` ile korunuyor.
 3. ~~Defter ayarları elle yazılı~~ **Çözüldü (18 Eki):** defter `scripts/train.py --config` çağırıyor; Colab'da ilk gerçek çalıştırmada doğrulanacak.
 4. ~~226×226 ifadesi~~ **Çözüldü:** CLAUDE.md'de 108×108 notu var; raporda da belirtilecek.
 5. Doğrulandı, sorun yok: COCO `area` = bbox alanı (APs/m/l tutarlı); train–val arasında birebir kopya yok, dhash ile yalnız 2 yakın kopya.

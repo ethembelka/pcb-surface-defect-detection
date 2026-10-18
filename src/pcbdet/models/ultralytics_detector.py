@@ -90,5 +90,46 @@ class UltralyticsDetector:
             "peak_vram_gb": peak_vram_gb,
         }
 
-    def export_predictions(self, weights: Path, dataset: DatasetConfig, split: str, out_json: Path) -> Path:
-        raise NotImplementedError("implemented in phase A3 (evaluation)")
+    def export_predictions(
+        self,
+        weights: Path,
+        image_paths: list[Path],
+        stem_to_id: dict[str, int],
+        out_json: Path,
+        imgsz: int = 640,
+        conf: float = 0.001,
+        iou_nms: float = 0.7,
+        max_det: int = 300,
+        half: bool = True,
+        batch: int = 32,
+    ) -> Path:
+        """Run inference and write a COCO *results* json.
+
+        Each detection becomes ``{"image_id", "category_id", "bbox": [x, y, w, h], "score"}`` with
+        ``image_id`` taken from ``stem_to_id`` (the COCO json's numeric ids, see data/coco.py) and
+        ``category_id = yolo_class + 1``. Boxes are in original-image pixels (Ultralytics undoes
+        the letterbox for us). Images without detections simply contribute nothing.
+        """
+        from ultralytics import YOLO
+
+        model = YOLO(str(weights))
+        results: list[dict] = []
+        for i in range(0, len(image_paths), batch):
+            chunk = [str(p) for p in image_paths[i : i + batch]]
+            outs = model.predict(chunk, imgsz=imgsz, conf=conf, iou=iou_nms, max_det=max_det,
+                                 half=half, verbose=False)
+            for p, r in zip(image_paths[i : i + batch], outs):
+                image_id = stem_to_id[p.stem]
+                xyxy = r.boxes.xyxy.cpu().numpy()
+                confs = r.boxes.conf.cpu().numpy()
+                clss = r.boxes.cls.cpu().numpy().astype(int)
+                for (x1, y1, x2, y2), s, c in zip(xyxy, confs, clss):
+                    results.append({
+                        "image_id": image_id,
+                        "category_id": int(c) + 1,
+                        "bbox": [round(float(x1), 2), round(float(y1), 2),
+                                 round(float(x2 - x1), 2), round(float(y2 - y1), 2)],
+                        "score": round(float(s), 5),
+                    })
+        write_json(results, out_json, indent=None)
+        return out_json

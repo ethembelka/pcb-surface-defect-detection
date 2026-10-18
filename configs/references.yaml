@@ -1,0 +1,38 @@
+# Reference results on DsPCBSD+ for the main results table (reporting/tables.py).
+# Numbers are copied from the papers; verify against the PDF before the final report.
+# `same_split: true`  -> official train/val split as in Lv et al. 2024 (directly comparable)
+# `same_split: false` -> different split / protocol; shown in a separate, flagged block.
+references:
+  - name: "Co-DETR (Lv 2024)"
+    input: "1333x800"
+    same_split: true
+    ap50: 0.848
+    ap75: 0.490
+    ap50_95: 0.492
+    ap_small: 0.425
+    ap_medium: 0.554
+    ap_large: 0.671
+    per_class_ap50: {SH: 0.885, SP: 0.842, SC: 0.825, OP: 0.898, MB: 0.836, HB: 0.973, CS: 0.727, CFO: 0.741, BMFO: 0.900}
+  - name: "YOLOv6-L6 (Lv 2024)"
+    input: "1280x1280"
+    same_split: true
+    ap50: 0.851
+    ap75: 0.525
+    ap50_95: 0.514
+    ap_small: 0.405
+    ap_medium: 0.597
+    ap_large: 0.681
+    per_class_ap50: {SH: 0.898, SP: 0.826, SC: 0.830, OP: 0.923, MB: 0.843, HB: 0.971, CS: 0.746, CFO: 0.743, BMFO: 0.881}
+  - name: "PCB-FS (Wang 2025)"
+    input: "n/a"
+    same_split: false
+    ap50: 0.862
+    ap50_95: 0.524
+  - name: "PCB-MMF (Jin 2026)"
+    input: "n/a"
+    same_split: false
+    ap50: 0.854
+  - name: "VisDefectNet (Xia 2026)"
+    input: "n/a"
+    same_split: false
+    ap50: 0.859

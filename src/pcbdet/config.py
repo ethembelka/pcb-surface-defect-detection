@@ -155,3 +155,60 @@ class TrainConfig:
     def as_dict(self) -> dict[str, Any]:
         """Plain dict (paths as strings) for the config snapshot written next to the run."""
         return {k: (str(v) if isinstance(v, Path) else v) for k, v in self.__dict__.items()}
+
+
+@dataclass(frozen=True)
+class EvalConfig:
+    """Evaluation settings (configs/eval/default.yaml). See the yaml for the meaning of each block."""
+
+    datasets: dict[str, Path]  # split name -> dataset yaml
+    coco_annotations_dir: Path
+    coco_json: dict[str, str]  # split name -> annotation file name
+    imgsz: int
+    conf: float
+    iou_nms: float
+    max_det: int
+    half: bool
+    batch: int
+    iou_match: float
+    decision_mode: str
+    decision_select_on: str
+    decision_grid_step: float
+    eff_batch: int
+    eff_half: bool
+    eff_warmup: int
+    eff_iters: int
+    results_dir: Path
+    tables_dir: Path
+    figures_dir: Path
+    references: Path
+    raw: dict[str, Any] = field(default_factory=dict, compare=False)  # verbatim yaml for the snapshot
+
+    @staticmethod
+    def from_yaml(path: str | Path) -> "EvalConfig":
+        d = load_yaml(path)
+        inf, m, dec, eff = d["inference"], d["matching"], d["decision"], d["efficiency"]
+        return EvalConfig(
+            datasets={k: resolve_path(v) for k, v in d["datasets"].items()},
+            coco_annotations_dir=resolve_path(d["coco_annotations_dir"]),
+            coco_json=dict(d["coco_json"]),
+            imgsz=int(inf["imgsz"]),
+            conf=float(inf["conf"]),
+            iou_nms=float(inf["iou_nms"]),
+            max_det=int(inf["max_det"]),
+            half=bool(inf["half"]),
+            batch=int(inf["batch"]),
+            iou_match=float(m["iou_match"]),
+            decision_mode=str(dec["mode"]),
+            decision_select_on=str(dec["select_on"]),
+            decision_grid_step=float(dec.get("grid_step", 0.01)),
+            eff_batch=int(eff["batch"]),
+            eff_half=bool(eff["half"]),
+            eff_warmup=int(eff["warmup"]),
+            eff_iters=int(eff["iters"]),
+            results_dir=resolve_path(d["results_dir"]),
+            tables_dir=resolve_path(d["tables_dir"]),
+            figures_dir=resolve_path(d["figures_dir"]),
+            references=resolve_path(d["references"]),
+            raw=d,
+        )

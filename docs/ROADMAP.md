@@ -21,7 +21,7 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 |---|---|---|---|---|
 | E1 | Hiç kod yok | `src/pcbdet/`, `scripts/`, `tests/` | ARCHITECTURE.md'deki modülleri sırayla yaz | A1–A4 |
 | E2 | ✅ (18 Eki) `val_internal` kurulmamış; eğitim resmi val'e bakıyor | `configs/dspcbsd.yaml`, `src/pcbdet/data/splits.py` | Train'i %90/%10 böl (tohum 0, sınıf varlığına göre dengeli) → `data/splits/{train_fit,val_internal}.txt`; eğitim yaml'ı `train: train_fit.txt`, `val: val_internal.txt`. Resmi val sadece `configs/dspcbsd_test.yaml` ile | A1 |
-| E3 | pycocotools `image_id` eşlemesi yok (dosya adları `Y_011791.jpg`, COCO id sayısal) | `models/ultralytics_detector.py → export_predictions` | Dosya adı → COCO id sözlüğü `instances_val2017.json`'dan; test yaz | A3 |
+| E3 | ✅ (18 Eki) pycocotools `image_id` eşlemesi yok (dosya adları `Y_011791.jpg`, COCO id sayısal) | `models/ultralytics_detector.py → export_predictions` | Dosya adı → COCO id sözlüğü `instances_val2017.json`'dan; test yaz | A3 |
 | E4 | ✅ (18 Eki) Colab defteri ayarları elle yazılı | `notebooks/colab_train.ipynb` | `scripts/train.py --config configs/train/<x>.yaml` çağırsın; ayar tek kaynakta | A1 |
 | E5 | ✅ (18 Eki) Ultralytics sürümü sabit değil (yerel 8.3.101) | `requirements.txt` | `ultralytics==8.3.101`; Colab da aynı sürümü kursun | A1 |
 | E6 | ✅ (18 Eki) "226×226" ifadesi eksik: 111 görüntü 108×108 | `CLAUDE.md`, rapor | İfadeyi düzelt; boyut analizinde ayrıca belirt | A1 |
@@ -45,8 +45,8 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 - **Karar kapısı:** toplam süre × kalan haftalar → A5'te hangi ek eğitimlerin sığacağı.
 
 ## A3 — Değerlendirme (A2 sürerken yazılır; 2–8 Kas'ta koşulur)
-1. `export_predictions` (E3), `evaluation/coco_eval.py`, `per_class.py` (F1-maks eşik), `confusion.py` (arka plan dahil), `efficiency.py`, `evaluator.py`, `scripts/evaluate.py`.
-2. Testler: id eşlemesi, F1-maks eşik seçimi, karışıklık eşlemesi (elle hesaplanmış küçük örnekler).
+1. ✅ (18 Eki) `export_predictions` (E3), `evaluation/coco_eval.py`, `per_class.py` (F1-maks eşik), `confusion.py` (arka plan dahil), `efficiency.py`, `evaluator.py`, `scripts/evaluate.py`.
+2. ✅ (18 Eki) Testler: id eşlemesi, F1-maks eşik seçimi, karışıklık eşlemesi (elle hesaplanmış küçük örnekler).
 3. Resmi val (test) üzerinde **bir kez** koş → `metrics.json`; `reporting/tables.py` → referanslarla ana tablo.
 - **Bitti sayılır:** AP50, AP50:95, APs/m/l, sınıf bazlı P/R/F1, karışıklık matrisi, FPS hazır; sayılar Ultralytics'in kendi `val` çıktısıyla kabaca tutarlı (büyük fark varsa E3'ü kontrol et).
 

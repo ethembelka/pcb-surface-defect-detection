@@ -19,8 +19,8 @@ def read_json(path: str | Path) -> Any:
         return json.load(f)
 
 
-def write_json(obj: Any, path: str | Path, indent: int = 2) -> Path:
-    """Write ``obj`` as pretty JSON (UTF-8, non-ASCII kept readable); creates parent dirs."""
+def write_json(obj: Any, path: str | Path, indent: int | None = 2) -> Path:
+    """Write ``obj`` as JSON (pretty by default; ``indent=None`` = compact, for large prediction files)."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as f:  # LF on every OS: same bytes on Colab and Windows

@@ -20,7 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Protocol
 
-from pcbdet.config import DatasetConfig, TrainConfig
+from pcbdet.config import DatasetConfig, TrainConfig  # noqa: F401  (DatasetConfig is part of the train signature)
 
 
 class Detector(Protocol):
@@ -30,6 +30,9 @@ class Detector(Protocol):
         """Train and return the directory that contains ``weights/best.pt`` and ``results.csv``."""
         ...
 
-    def export_predictions(self, weights: Path, dataset: DatasetConfig, split: str, out_json: Path) -> Path:
-        """Run inference on ``split`` and write a COCO results json. (Phase A3.)"""
+    def export_predictions(
+        self, weights: Path, image_paths: list[Path], stem_to_id: dict[str, int], out_json: Path, **infer
+    ) -> Path:
+        """Run inference on ``image_paths`` and write a COCO results json whose ``image_id`` values
+        come from ``stem_to_id``. ``infer`` holds imgsz / conf / iou_nms / max_det / half / batch."""
         ...
