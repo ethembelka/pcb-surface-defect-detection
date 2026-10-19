@@ -1,13 +1,11 @@
 # Seed replicate of the main run (phase A5, research question 4b): identical to yolo11s_640.yaml except seed 1.
-# Trained LOCALLY on the RTX 3060 (6 GB): batch 16 instead of Colab's 32. Ultralytics accumulates gradients to a
-# nominal batch of 64 in both cases (16x4 = 32x2), so the effective batch matches; only BatchNorm statistics and
-# augmentation grouping differ. Report as "seed + hardware" replicate, not a pure seed replicate.
-# Run: python scripts/train.py --config configs/train/yolo11s_640_s1.yaml --run-id yolo11s_640_s1   (~10 h)
+# Run on Colab (Pro) so that batch 32 matches the main run exactly -> a pure seed replicate.
+# Notebook: TRAIN_CONFIG = "configs/train/yolo11s_640_s1.yaml", RUN_ID = "yolo11s_640_s1"   (~4 h on T4, ~2 h on L4)
 model: yolo11s.pt
 data: configs/dspcbsd.yaml
 imgsz: 640
 epochs: 100
-batch: 16
+batch: 32
 seed: 1
 patience: 30
 workers: 4
