@@ -1,7 +1,13 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A2 ✅ · A3 ✅ · A4 ✅ (bulgular EXPERIMENTS.md "Bulgular" B1–B8) · sırada A5 karar kapısı.** Plan: `docs/ROADMAP.md`.
+**Aşama: A5 — 320 px eğitimi bitti, val_internal ölçüldü; test onayı bekliyor. Tohum 1 kararı açık.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-20 gece, cc) — 320 px eğitimi (A5) ve yerel ısı sorunu
+- **yolo11s_320_s0 tamamlandı** (yerel 3060, 100 epoch; en iyi epoch 87). Ultralytics val_internal: mAP50 **0,868** / mAP50:95 **0,527** — 640 px ana modelle (0,864 / 0,529) pratikte aynı. Sınıf bazında da benzer (CS 0,734 ↔ 0,763, CFO 0,750 ↔ 0,721). Test ölçümü kullanıcı onayı bekliyor.
+- **Isıl kısıtlama:** ~02:50'den itibaren GPU 93 °C, çekirdek 52 MHz (2100 yerine); epoch süresi 95 s → 520 s. Saat kilidi/güç sınırı yönetici yetkisi istiyor (yapılamadı). Eğitim çoğunlukla 300 MHz civarında kısıtlı koştu; toplam duvar süresi ~4 sa (normalde 2,5). `train_summary.json` yalnızca son resume parçasını (10 epoch) yansıtıyor; **süre karşılaştırması için kullanma.**
+- **Bakıcı betiği başarısız:** Git Bash'te `$!` Windows PID'si olmadığı için `taskkill` yanlış süreci hedefledi; TaskStop bash'i öldürürken python yetim kaldı; 05:47'de aynı run'a ikinci bir eğitim başladı (bir epoch yazamadan durduruldu, results.csv temiz). Ardından asıl süreç dataloader işçisi `EOFError` ile epoch 90'da takıldı → öldürülüp `--resume` ile 91–100 tamamlandı. Ders: yerel uzun eğitimlerde PID yönetimi için PowerShell kullan; bakıcı bir daha kullanılmayacak.
+- **Tohum 1 (640, yerel) başlatılmadı:** ısıl kısıtlama altında 10 saatlik eğitim 20+ saate uzar; Colab kotası açılırsa orada batch 32 ile (saf tekrar) koşulması daha doğru. Karar kullanıcıyla.
 
 ## Proje günlüğü (Word)
 `docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm 2026-10-19 (12 bölüm, 6 şekil: eğitim eğrileri, karışıklık matrisi, IoU dağılımı, CS/MB→CFO/HB galerileri). Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
