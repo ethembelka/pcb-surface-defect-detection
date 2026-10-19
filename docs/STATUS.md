@@ -14,7 +14,7 @@ _Son güncelleme: 2026-10-18 (cc)_
 - **Tohum 1 (640, yerel) başlatılmadı:** ısıl kısıtlama altında 10 saatlik eğitim 20+ saate uzar; Colab kotası açılırsa orada batch 32 ile (saf tekrar) koşulması daha doğru. Karar kullanıcıyla.
 
 ## Proje günlüğü (Word)
-`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm 2026-10-19 (12 bölüm, 6 şekil: eğitim eğrileri, karışıklık matrisi, IoU dağılımı, CS/MB→CFO/HB galerileri). Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
+`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm **2026-10-20** (13 bölüm, 7 şekil; yeni: Bölüm 10 çözünürlük deneyi + `resolution_comparison_640_vs_320_test.png`). Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
 
 ## Son yapılan (2026-10-19, cc) — A4 hata analizi
 - `scripts/analyze.py --run <run> --split test` → `analysis.json` + 4 tablo (`size_ap`, `size_recall`, `iou`, `confusion_pairs`) + 24 şekil (`iou_boxplot`, sınıf başına `gallery_fn_*` / `gallery_fp_*`, çift başına `gallery_pair_*`). Modüller `src/pcbdet/analysis/{gt_matching,size_analysis,iou_analysis,confusion_pairs,error_gallery,analyzer}.py`; 29 test.
