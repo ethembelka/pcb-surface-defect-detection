@@ -1,0 +1,6 @@
+true,pred,count,share_of_true_class,reverse_count,small,medium,large,median_score,median_iou
+SC,SP,14,0.0491,6,13,1,0,0.576,0.736
+MB,OP,12,0.022,6,12,0,0,0.577,0.791
+CFO,MB,11,0.026,11,9,2,0,0.625,0.719
+MB,CFO,11,0.0201,11,11,0,0,0.607,0.759
+CFO,BMFO,10,0.0236,3,3,6,1,0.73,0.874

@@ -1,7 +1,11 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A5 — 320 px eğitimi bitti, val_internal ölçüldü; test onayı bekliyor. Tohum 1 kararı açık.** Plan: `docs/ROADMAP.md`.
+**Aşama: A5 — 320 px deneyi tamamlandı (test bir kez ölçüldü, B9–B12). Tohum 1 kararı açık; sonra A6 rapor/sunum.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-20, cc) — 320 px test sonucu ve karşılaştırma
+- `evaluate.py --split test --efficiency` (bir kez) → AP50 **0,833** / AP75 0,521 / AP50:95 **0,503** / APs 0,422 / APm 0,567 / APl **0,725**; eşik conf 0,35 → P 0,795 / R 0,790 / F1 0,793; 5,4 GFLOPs, 17,7 ms/img. EXPERIMENTS.md'de satır + Bulgular B9–B12; `reports/tables/resolution_comparison_640_vs_320_test.csv`; `analyze.py` 320 için de koşuldu (tablolar/galeriler).
+- Özet: 640 vs 320 toplamda −1,5 AP50; sınıfa göre zıt (MB −5, SC +2,5, APl +12); hız 1,45×. Çözünürlük Q4a cevaplandı.
 
 ## Son yapılan (2026-10-20 gece, cc) — 320 px eğitimi (A5) ve yerel ısı sorunu
 - **yolo11s_320_s0 tamamlandı** (yerel 3060, 100 epoch; en iyi epoch 87). Ultralytics val_internal: mAP50 **0,868** / mAP50:95 **0,527** — 640 px ana modelle (0,864 / 0,529) pratikte aynı. Sınıf bazında da benzer (CS 0,734 ↔ 0,763, CFO 0,750 ↔ 0,721). Test ölçümü kullanıcı onayı bekliyor.
@@ -71,8 +75,9 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
-1. Kullanıcı: Bulgular B1–B8'i oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
-2. **A5 (karar verildi):** 320 px eğitimi yerelde (`configs/train/yolo11s_320.yaml`, run_id `yolo11s_320_s0`, ~3 sa) → val_internal → test (bir kez) → 640 ile karşılaştırma. İkinci eğitim (tohum 1) yalnızca Colab kotası açılırsa. Deneyler 1 hafta içinde kapanır; sonra rapor/sunum.
+1. Kullanıcı: Bulgular B1–B12'yi oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
+2. **Tohum 1 kararı (kullanıcı):** Colab kotası açıldıysa `yolo11s_640.yaml` + seed 1 (batch 32, saf tekrar, 4,2 sa); yerelde ısıl kısıtlama nedeniyle 20+ sa → önerilmez. Yapılmazsa raporda sınırlılık.
+3. A6: günlük 3. sürüm; IEEE rapor iskeleti; sunum iskeleti; kod dondurma
 3. Referans sayılarını makale PDF'inden bir kez daha doğrula (EVALUATION_PROTOCOL.md notu)
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)

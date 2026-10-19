@@ -55,7 +55,7 @@ Not ağırlığı: uygulama %50 · rapor %25 · sunum %25.
 - Her bulgu: sayı + görüntü örneği → EXPERIMENTS.md "Bulgular".
 - **Bitti sayılır:** Q2 ve Q3 sayılarla cevaplandı; rapora girecek şekiller `reports/figures/`'da.
 
-## A5 — Ek eğitimler (Kasım; A2 süresine göre seçilir)
+## A5 — Ek eğitimler (Kasım; A2 süresine göre seçilir) — bütçe 1–2 eğitim (kullanıcı, 19 Eki): ✅ 320 px (20 Eki, B9–B12); tohum 1 Colab'a bağlı; 1024/n/m/RT-DETR elendi
 Öncelik: (1) tohum 1, 2 → ortalama ± std · (2) girdi boyutu 320 / 1024 → Q4 · (3) YOLO11n / m · (4) RT-DETR.
 Her biri için: süre tahmini → STATUS/EXPERIMENTS → kullanıcı onayı → eğitim → A3 değerlendirmesi (otomatik) → kayıt.
 - **Bitti sayılır:** en az (1) tamam; öneride söz verilen "subset" anlamlı bir sonuç veriyor.

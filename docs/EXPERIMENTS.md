@@ -5,6 +5,7 @@ Her deney bitince `log-experiment` skill'i ile bir satır eklenir. Sonuç sayıl
 | run_id | tarih | model | imgsz | epoch | tohum | ortam | mAP50 | mAP50:95 | APs | not |
 |---|---|---|---|---|---|---|---|---|---|---|
 | yolo11s_640_s0 | 2026-10-19 | YOLO11s | 640 | 100 (en iyi 70) | 0 | Colab T4 | 0.847 | 0.505 | 0.402 | test = resmi val, pycocotools; val_internal AP50 0.860; AP75 0.525, APm 0.573, APl 0.605; eşik conf 0.33 → P 0.806 / R 0.813 / F1 0.810; 9.43 M param, 21.57 GFLOPs, 25.61 ms/img (3060, fp16); eğitim 4.2 sa |
+| yolo11s_320_s0 | 2026-10-20 | YOLO11s | 320 | 100 (en iyi 87) | 0 | yerel 3060 (ısıl kısıtlı) | 0.833 | 0.503 | 0.422 | test = resmi val, pycocotools; val_internal AP50 0.865; AP75 0.521, APm 0.567, APl 0.725; eşik conf 0.35 → P 0.795 / R 0.790 / F1 0.792; 9.43 M param, 5.39 GFLOPs, 17.67 ms/img (3060, fp16); eğitim duvar süresi ~4 sa (ısıl kısıtlama; normalde ~2,5) |
 
 ## Bulgular
 _Hata analizi (`error-analysis` skill'i) buraya kısa maddeler ekler: görüntü düzeyinde gözlem + sayı._
@@ -22,3 +23,10 @@ Toplam: 4.092 GT kutu → 3.326 bulundu, **766 kaçırıldı**, **799 yanlış a
 - **B8 Düşük destekli hücreler yorumlanmadı:** HB-küçük (7 GT, AP50 0,33), MB-orta (16), SP-orta (25), SC-büyük (2), BMFO-büyük (13), CFO-büyük (29). Tablolarda `low_support` ile işaretli.
 
 Rapora girecek şekiller: `iou_boxplot_*`, `gallery_fn_CS_*`, `gallery_pair_MB_as_CFO_*`, `gallery_pair_SC_as_SP_*`, `gallery_fp_HB_*`; tablolar: `size_ap_*`, `size_recall_*`, `iou_*`, `confusion_pairs_*`.
+
+### Çözünürlük deneyi: yolo11s_320_s0 vs yolo11s_640_s0 — test (2026-10-20; `reports/tables/resolution_comparison_640_vs_320_test.csv`, `analysis.json` her iki run için)
+- **B9 Çözünürlüğün toplam etkisi küçük.** 320 px test'te AP50 **0,833** (640: 0,847; −1,5), AP50:95 0,503 (−0,3), AP75 0,521 (−0,4). İç doğrulamada sıralama tersti (320: 0,865, 640: 0,860). Yani 226 px görüntüyü 640'a büyütmek 320'ye göre ~1,5 AP50 puanı kazandırıyor; bu fark tek tohumlu deneyde gürültü sınırına yakın. Önerideki "büyütme küçük hatalar için şart" varsayımı **bu ölçekte doğrulanmadı**: 226→320 zaten yeterli, 320→640 marjinal.
+- **B10 Etki sınıfa göre zıt yönlü.** Kenar ayrıntısı gerektiren küçük sınıflar 320'de kaybediyor: MB **−5,0** AP50 (0,842→0,792), OP −2,6, SH −2,4, BMFO −2,4, SP −2,1. Buna karşılık SC +2,5 ve CS +0,3; **APl +12,0** (0,605→0,725) ve büyük CS'te AP50:95 0,619→0,678: düşük çözünürlükte uzun çizikler daha az parçalanıyor (alıcı alan çiziğe göre daha büyük) → B2'deki "kutu granülerliği" sorunu hafifliyor. HB etkilenmiyor (0,978).
+- **B11 Sabit eşikte duyarlılık düşüyor, AP'de görünmüyor.** conf 0,35'te 320 px 861 kutu kaçırıyor (640: 766), küçüklerde 678 vs 559; ama APs 0,422 (640: 0,402) daha yüksek. AP sıralamayı ödüllendirir, sabit eşik kullanılabilirliği: fabrikada 320 px modeli aynı eşikte daha çok küçük hata kaçırır.
+- **B12 Hız.** 320 px: 5,4 GFLOPs (640: 21,6, 4×) ve 3060'ta 17,7 ms/görüntü (640: 25,6; 1,45×; ön/son işleme sabit maliyet). Doğruluk–hız tablosu için.
+- **Sınırlılıklar:** tek tohum; 320 px yerelde ısıl kısıtlama altında eğitildi (sonucu değil süreyi etkiler); val_internal→test düşüşü 320'de daha büyük (−3,2 vs −1,3) → 320 modelinin iç doğrulamaya daha çok uyduğu ya da tohum gürültüsü; ayırt etmek için tohum tekrarı gerekir.
