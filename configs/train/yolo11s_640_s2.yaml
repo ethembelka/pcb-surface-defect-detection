@@ -1,0 +1,16 @@
+# Third seed of the main run (phase A5, research question 4b): identical to yolo11s_640.yaml except seed 2.
+# Run on Colab (Pro, L4) with batch 32 -> pure seed replicate; gives mean ± std over 3 seeds.
+# Notebook: TRAIN_CONFIG = "configs/train/yolo11s_640_s2.yaml", RUN_ID = "yolo11s_640_s2"   (~2.5 h on L4)
+model: yolo11s.pt
+data: configs/dspcbsd.yaml
+imgsz: 640
+epochs: 100
+batch: 32
+seed: 2
+patience: 30
+workers: 4
+optimizer: auto
+cache: false
+fraction: 1.0
+project: outputs/runs
+device: auto
