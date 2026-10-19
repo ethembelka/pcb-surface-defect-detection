@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-20 (kullanıcı+cc): Colab Pro alındı; **tohum 1 Colab L4'te koşuldu** (saf tekrar). Test: 640 px 2 tohum AP50 0,849 ± 0,002. **Deneyler kapandı**; 1024 px, YOLO11n/m, RT-DETR yapılmayacak (gelecek çalışma). Sırada A6 rapor/sunum.
 - 2026-10-19 (kullanıcı): **Ek eğitim bütçesi en fazla 2, hedef 1; deneyler 1 hafta içinde bitmeli.** Seçilen: **320 px** (yerel 3060, ~3 sa) → çözünürlük sorusu (Q4a, B4). İkinci eğitim (tohum 1, 640) yalnızca Colab kotası açılırsa; 1024 px, YOLO11n/m, RT-DETR yapılmayacak → raporda sınırlılık / gelecek çalışma. Öneri metnindeki "a subset" ifadesi bunu kapsıyor.
 - 2026-10-19 (cc): **Tahminler Ultralytics doğrulama hattıyla üretilir** (multi-label NMS, dikdörtgen letterbox), metrikler pycocotools ile. `model.predict` hattı aynı ağırlıklarda 2,6 AP50 puanı düşük verdi; checkpoint seçimi ve referanslarla tutarlılık için val hattı seçildi (EVALUATION_PROTOCOL.md).
 - 2026-10-19 (cc): Ana eğitim tamamlandı (Colab T4, 100 epoch, 4,2 sa, en iyi epoch 70). val_internal pycocotools AP50 0,860 / AP50:95 0,520; karar eşiği conf 0,33.

@@ -1,7 +1,13 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A5 — 320 px deneyi tamamlandı (test bir kez ölçüldü, B9–B12). Tohum 1 kararı açık; sonra A6 rapor/sunum.** Plan: `docs/ROADMAP.md`.
+**Aşama: A5 ✅ tamamlandı (320 px + tohum 1; B9–B15). Deneyler kapandı → A6 rapor/sunum.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-20 akşam, cc) — tohum 1 (Colab Pro, L4)
+- Kullanıcı Colab Pro aldı; `yolo11s_640_s1` (ana eğitimin saf tekrarı, batch 32, seed 1) L4'te 2 sa 29 dk (90 s/epoch), en iyi epoch 77. Colab runtime sonra kapatıldı (kredi).
+- val_internal: AP50 0,869 / AP50:95 0,522, eşik conf **0,40**. **Test (bir kez):** AP50 **0,850** / AP75 0,530 / AP50:95 **0,511** / APs 0,433 / APm 0,575 / APl 0,599; P 0,834 / R 0,795 / F1 0,814; 24,1 ms/img.
+- **640 px, 2 tohum: AP50 0,849 ± 0,002, AP50:95 0,508 ± 0,004** (`seed_comparison_640_test.csv`). 320 px farkı (−1,6 AP50, MB −5,2, APl +12) gürültünün çok üstünde; APs farkı gürültü içinde. Hata analizi bulguları tohum 1'de tekrarlandı (B15). `analyze.py` s1 için de koşuldu.
+- Deney bütçesi (2 ek eğitim) kullanıldı; **başka eğitim yok.** Sırada A6.
 
 ## Son yapılan (2026-10-20, cc) — 320 px test sonucu ve karşılaştırma
 - `evaluate.py --split test --efficiency` (bir kez) → AP50 **0,833** / AP75 0,521 / AP50:95 **0,503** / APs 0,422 / APm 0,567 / APl **0,725**; eşik conf 0,35 → P 0,795 / R 0,790 / F1 0,793; 5,4 GFLOPs, 17,7 ms/img. EXPERIMENTS.md'de satır + Bulgular B9–B12; `reports/tables/resolution_comparison_640_vs_320_test.csv`; `analyze.py` 320 için de koşuldu (tablolar/galeriler).
@@ -14,7 +20,7 @@ _Son güncelleme: 2026-10-18 (cc)_
 - **Tohum 1 (640, yerel) başlatılmadı:** ısıl kısıtlama altında 10 saatlik eğitim 20+ saate uzar; Colab kotası açılırsa orada batch 32 ile (saf tekrar) koşulması daha doğru. Karar kullanıcıyla.
 
 ## Proje günlüğü (Word)
-`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm **2026-10-20** (13 bölüm, 7 şekil; yeni: Bölüm 10 çözünürlük deneyi + `resolution_comparison_640_vs_320_test.png`). Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
+`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm **2026-10-20_v4** (14 bölüm, 8 şekil; yeni: Bölüm 11 tohum tekrarı + `summary_runs_vs_references_test.png`). Sabahki v3 silindi. Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
 
 ## Son yapılan (2026-10-19, cc) — A4 hata analizi
 - `scripts/analyze.py --run <run> --split test` → `analysis.json` + 4 tablo (`size_ap`, `size_recall`, `iou`, `confusion_pairs`) + 24 şekil (`iou_boxplot`, sınıf başına `gallery_fn_*` / `gallery_fp_*`, çift başına `gallery_pair_*`). Modüller `src/pcbdet/analysis/{gt_matching,size_analysis,iou_analysis,confusion_pairs,error_gallery,analyzer}.py`; 29 test.
@@ -75,9 +81,9 @@ _Son güncelleme: 2026-10-18 (cc)_
 - Depo GitHub'da (public): https://github.com/ethembelka/pcb-surface-defect-detection; defterde `GITHUB_USER` dolduruldu
 
 ## Sıradaki (ayrıntı: ROADMAP.md → A3/A4)
-1. Kullanıcı: Bulgular B1–B12'yi oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
-2. **Tohum 1 kararı (kullanıcı):** Colab kotası açıldıysa `yolo11s_640.yaml` + seed 1 (batch 32, saf tekrar, 4,2 sa); yerelde ısıl kısıtlama nedeniyle 20+ sa → önerilmez. Yapılmazsa raporda sınırlılık.
-3. A6: günlük 3. sürüm; IEEE rapor iskeleti; sunum iskeleti; kod dondurma
+1. Kullanıcı: Bulgular B1–B15'i oku, düzelt; HB FP galerisindeki 39 örneği gözle değerlendir (etiket eksikliği mi?)
+2. ~~Tohum 1~~ ✅ yapıldı (B13–B15).
+3. A6: IEEE rapor iskeleti (`reports/paper/`), sunum iskeleti, README yeniden üretim adımları, kod dondurma (6 Ara); günlük 4. sürüm hazır
 3. Referans sayılarını makale PDF'inden bir kez daha doğrula (EVALUATION_PROTOCOL.md notu)
 
 ## Açık sorunlar (cc incelemesi, 2026-10-16; güncelleme 2026-10-18)
