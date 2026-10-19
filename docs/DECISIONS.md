@@ -1,6 +1,7 @@
 # Karar Günlüğü
 Yeni kararlar en üste, tarihli. Kaynak: (sohbet) = claude.ai sohbeti, (cc) = Claude Code, (hoca) = hocayla görüşme.
 
+- 2026-10-20 (cc): Tohum 2 tamamlandı (L4→T4 resume). **640 px, n = 3: AP50 0,847 ± 0,003.** Eğitim bütçesi kapandı (4 eğitim). A6'ya geçiş.
 - 2026-10-20 (kullanıcı): **Tohum 2 (640 px) Colab L4'te koşulacak** → 3 tohum ortalaması ± sapma (alan standardı). Rapor yazımına (A6) paralel; başka eğitim yok.
 - 2026-10-20 (kullanıcı+cc): Colab Pro alındı; **tohum 1 Colab L4'te koşuldu** (saf tekrar). Test: 640 px 2 tohum AP50 0,849 ± 0,002. **Deneyler kapandı**; 1024 px, YOLO11n/m, RT-DETR yapılmayacak (gelecek çalışma). Sırada A6 rapor/sunum.
 - 2026-10-19 (kullanıcı): **Ek eğitim bütçesi en fazla 2, hedef 1; deneyler 1 hafta içinde bitmeli.** Seçilen: **320 px** (yerel 3060, ~3 sa) → çözünürlük sorusu (Q4a, B4). İkinci eğitim (tohum 1, 640) yalnızca Colab kotası açılırsa; 1024 px, YOLO11n/m, RT-DETR yapılmayacak → raporda sınırlılık / gelecek çalışma. Öneri metnindeki "a subset" ifadesi bunu kapsıyor.

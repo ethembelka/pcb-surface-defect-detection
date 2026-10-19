@@ -1,7 +1,13 @@
 # Durum
 _Son güncelleme: 2026-10-18 (cc)_
 
-**Aşama: A5 ✅ tamamlandı (320 px + tohum 1; B9–B15). Deneyler kapandı → A6 rapor/sunum.** Plan: `docs/ROADMAP.md`.
+**Aşama: A5 ✅ tamamlandı (320 px + tohum 1 + tohum 2; B9–B15, n = 3). Deneyler kesin olarak kapandı → A6 rapor/sunum.** Plan: `docs/ROADMAP.md`.
+
+## Son yapılan (2026-10-20 gece, cc) — tohum 2 (Colab, L4→T4 resume)
+- `yolo11s_640_s2`: L4'te epoch 1–78 (oturum koptu, eğitim arka planda sürdü), T4'te 79–100 `--resume`; en iyi epoch 66; toplam ~2,9 sa. Ders: Colab'da sayfa yenilenince defter GitHub'dan yeniden yüklenir ve hücre 2'deki değişiklikler kaybolur; önce hücre 2 kontrol edilmeli.
+- val_internal AP50 0,862 / AP50:95 0,519, eşik conf 0,34. **Test (bir kez):** AP50 **0,845** / AP75 0,527 / AP50:95 **0,505** / APs 0,422 / APm 0,577 / APl 0,600; F1 0,806; 21,4 ms/img.
+- **640 px, 3 tohum: AP50 0,847 ± 0,003 · AP50:95 0,507 ± 0,003** (B13 güncellendi, n = 3). 320 farkı −1,5 AP50 = 5,3 sd (B14). B15 üç modelde teyit. `analyze.py` s2 için koşuldu. Özet şekil hata çubuklu olarak yenilendi.
+- **Eğitim bütçesi kapandı: 4 eğitim (640×3 tohum, 320×1).** Başka eğitim yok.
 
 ## Son yapılan (2026-10-20 akşam, cc) — tohum 1 (Colab Pro, L4)
 - Kullanıcı Colab Pro aldı; `yolo11s_640_s1` (ana eğitimin saf tekrarı, batch 32, seed 1) L4'te 2 sa 29 dk (90 s/epoch), en iyi epoch 77. Colab runtime sonra kapatıldı (kredi).
@@ -20,7 +26,7 @@ _Son güncelleme: 2026-10-18 (cc)_
 - **Tohum 1 (640, yerel) başlatılmadı:** ısıl kısıtlama altında 10 saatlik eğitim 20+ saate uzar; Colab kotası açılırsa orada batch 32 ile (saf tekrar) koşulması daha doğru. Karar kullanıcıyla.
 
 ## Proje günlüğü (Word)
-`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm **2026-10-20_v4** (14 bölüm, 8 şekil; yeni: Bölüm 11 tohum tekrarı + `summary_runs_vs_references_test.png`). Sabahki v3 silindi. Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
+`docs/progress/Proje_Gunlugu_<tarih>.docx` — hiç bilmeyen biri için adım adım anlatım; her çalışma gününün sonunda yeni tarihli sürüm üretilir, **en yeni tarih geçerlidir**. Son sürüm **2026-10-20_v5** (14 bölüm, 8 şekil; Bölüm 11 üç tohuma güncellendi). Eski aynı günlü sürümler silindi. Üretim betiği oturum dışı (docx-js); içerik STATUS/EXPERIMENTS'tan derlenir.
 
 ## Son yapılan (2026-10-19, cc) — A4 hata analizi
 - `scripts/analyze.py --run <run> --split test` → `analysis.json` + 4 tablo (`size_ap`, `size_recall`, `iou`, `confusion_pairs`) + 24 şekil (`iou_boxplot`, sınıf başına `gallery_fn_*` / `gallery_fp_*`, çift başına `gallery_pair_*`). Modüller `src/pcbdet/analysis/{gt_matching,size_analysis,iou_analysis,confusion_pairs,error_gallery,analyzer}.py`; 29 test.
